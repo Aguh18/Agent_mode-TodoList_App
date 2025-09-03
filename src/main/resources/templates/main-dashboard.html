@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Todo App</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <s
+    
+    tyle>
+      body {
+        background-color: #f8f9fa;
+      }
+
+      /* Single page layout styles */
+      .main-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .ai-agent-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .ai-agent-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+      }
+
+      .main-content {
+        padding: 30px 0;
+      }
+      .todo-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+      }
+      .todo-card:hover {
+        transform: translateY(-2px);
+      }
+      .completed-todo {
+        opacity: 0.7;
+      }
+      .completed-todo .todo-title {
+        text-decoration: line-through;
+      }
+      .add-todo-card {
+        border: 2px dashed #dee2e6;
+        background-color: #f8f9fa;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .add-todo-card:hover {
+        border-color: #667eea;
+        background-color: #e9ecef;
+      }
+      .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+      }
+
+      /* AI Chat Modal Styles */
+      .ai-chat-modal .modal-dialog {
+        max-width: 600px;
+        margin: 2rem auto;
+      }
+
+      .ai-chat-modal .modal-content {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .ai-chat-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px 15px 0 0;
+        padding: 20px;
+      }
+
+      .ai-chat-messages {
+        height: 400px;
+        overflow-y: auto;
+        padding: 20px;
+        background-color: #fafbfc;
+      }
+
+      .ai-chat-input {
+        padding: 20px;
+        background-color: white;
+        border-radius: 0 0 15px 15px;
+      }
+      .message {
+        margin-bottom: 15px;
+        max-width: 80%;
+      }
+      .message.user {
+        margin-left: auto;
+        text-align: right;
+      }
+      .message.ai {
+        margin-right: auto;
+      }
+      .message-bubble {
+        padding: 10px 15px;
+        border-radius: 18px;
+        display: inline-block;
+        word-wrap: break-word;
+      }
+      .message.user .message-bubble {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+      .message.ai .message-bubble {
+        background: #f1f3f4;
+        color: #333;
+      }
+      .typing-indicator {
+        display: none;
+        padding: 10px 15px;
+        background: #f1f3f4;
+        border-radius: 18px;
+        margin-bottom: 15px;
+      }
+      .typing-dots {
+        display: inline-block;
+      }
+      .typing-dots span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #999;
+        margin: 0 2px;
+        animation: typing 1.4s infinite ease-in-out;
+      }
+      .typing-dots span:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+      .typing-dots span:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+      @keyframes typing {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.5;
+        }
+        40% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Loading and notification styles */
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+      .loading-spinner {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+      }
+      .notification-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+      }
+      .notification {
+        min-width: 300px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      .search-container {
+        margin-bottom: 20px;
+      }
+      .bulk-actions {
+        margin-bottom: 20px;
+        display: none;
+      }
+      .todo-item-checkbox {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 10;
+      }
+
+      /* Agent Mode Styles */
+      .bg-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .chat-messages {
+        background-color: #fafbfc;
+      }
+      .chat-input {
+        background-color: white;
+      }
+      .message.user .message-bubble {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        margin-left: auto;
+        border-bottom-right-radius: 4px;
+      }
+      .message.ai .message-bubble {
+        background: white;
+        color: #333;
+        border: 1px solid #e1e5e9;
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      .quick-action-card {
+        transition: transform 0.2s ease;
+        cursor: pointer;
+      }
+      .quick-action-card:hover {
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 sidebar p-3">
+          <div class="d-flex align-items-center mb-4">
+            <i class="fas fa-tasks fa-2x me-3"></i>
+            <h4 class="mb-0">TodoApp</h4>
+          </div>
+
+          <div class="user-info mb-4 p-3 bg-light bg-opacity-10 rounded">
+            <div class="d-flex align-items-center">
+              <div class="avatar me-3">
+                <i class="fas fa-user-circle fa-2x"></i>
+              </div>
+              <div>
+                <h6 class="mb-0" id="userDisplayName">Loading...</h6>
+                <small class="text-white-50">Welcome back!</small>
+              </div>
+            </div>
+          </div>
+
+          <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="#" data-section="dashboard">
+                <i class="fas fa-home me-2"></i>Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-section="todos">
+                <i class="fas fa-tasks me-2"></i>My Todos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-section="completed">
+                <i class="fas fa-check-circle me-2"></i>Completed
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-section="agent">
+                <i class="fas fa-robot me-2"></i>Agent Mode
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-section="settings">
+                <i class="fas fa-cog me-2"></i>Settings
+              </a>
+            </li>
+          </ul>
+
+          <div class="mt-auto pt-3">
+            <button class="btn btn-outline-light w-100" id="logoutBtn">
+              <i class="fas fa-sign-out-alt me-2"></i>Logout
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 p-4">
+          <!-- Header -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h1 class="h3 mb-0" id="pageTitle">Dashboard</h1>
+              <p class="text-muted mb-0" id="pageSubtitle">
+                Overview of your todos
+              </p>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-primary" id="refreshBtn">
+                <i class="fas fa-sync-alt me-2"></i>Refresh
+              </button>
+              <button class="btn btn-primary" id="addTodoBtn">
+                <i class="fas fa-plus me-2"></i>Add Todo
+              </button>
+            </div>
+          </div>
+
+          <!-- Search and Filter Section -->
+          <div
+            class="search-container"
+            id="searchContainer"
+            style="display: none"
+          >
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fas fa-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="searchInput"
+                    placeholder="Search todos..."
+                  />
+                </div>
+              </div>
+              <div class="col-md-3">
+                <select class="form-select" id="statusFilter">
+                  <option value="all">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <select class="form-select" id="sortBy">
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="title">Title A-Z</option>
+                  <option value="title-desc">Title Z-A</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bulk Actions -->
+          <div class="bulk-actions" id="bulkActions">
+            <div class="d-flex align-items-center gap-3 p-3 bg-light rounded">
+              <span id="selectedCount">0 items selected</span>
+              <button class="btn btn-sm btn-success" id="bulkCompleteBtn">
+                <i class="fas fa-check me-1"></i>Mark Complete
+              </button>
+              <button class="btn btn-sm btn-warning" id="bulkPendingBtn">
+                <i class="fas fa-clock me-1"></i>Mark Pending
+              </button>
+              <button class="btn btn-sm btn-danger" id="bulkDeleteBtn">
+                <i class="fas fa-trash me-1"></i>Delete Selected
+              </button>
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                id="clearSelectionBtn"
+              >
+                Clear Selection
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="row mb-4" id="statsSection">
+            <div class="col-md-3 mb-3">
+              <div class="card stats-card">
+                <div class="card-body text-center">
+                  <i class="fas fa-tasks fa-2x mb-2"></i>
+                  <h3 class="mb-0" id="totalTodos">0</h3>
+                  <small>Total Todos</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <div class="card stats-card">
+                <div class="card-body text-center">
+                  <i class="fas fa-clock fa-2x mb-2"></i>
+                  <h3 class="mb-0" id="pendingTodos">0</h3>
+                  <small>Pending</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <div class="card stats-card">
+                <div class="card-body text-center">
+                  <i class="fas fa-check-circle fa-2x mb-2"></i>
+                  <h3 class="mb-0" id="completedTodos">0</h3>
+                  <small>Completed</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <div class="card stats-card">
+                <div class="card-body text-center">
+                  <i class="fas fa-chart-line fa-2x mb-2"></i>
+                  <h3 class="mb-0" id="completionRate">0%</h3>
+                  <small>Completion Rate</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Todos Grid -->
+          <div class="row" id="todosContainer">
+            <!-- Todos will be loaded here -->
+          </div>
+
+          <!-- Agent Mode Section -->
+          <div id="agentSection" style="display: none">
+            <div class="row">
+              <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm border-0">
+                  <div
+                    class="card-header bg-gradient text-white d-flex align-items-center justify-content-between"
+                  >
+                    <div class="d-flex align-items-center">
+                      <i class="fas fa-robot fa-lg me-3"></i>
+                      <div>
+                        <h5 class="mb-0">Asisten AI Todo</h5>
+                        <small class="opacity-75"
+                          >Tanya saya untuk membantu mengelola todo Anda</small
+                        >
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge bg-success" id="agentStatus"
+                        >Online</span
+                      >
+                      <button
+                        class="btn btn-sm btn-outline-light"
+                        id="clearChatBtn"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body p-0">
+                    <!-- Chat Messages -->
+                    <div
+                      class="chat-messages"
+                      id="chatMessages"
+                      style="height: 400px; overflow-y: auto; padding: 20px"
+                    >
+                      <div class="message ai">
+                        <div class="message-bubble">
+                          <i class="fas fa-robot me-2"></i>
+                          Halo! Saya Asisten AI Todo Anda. Saya dapat membantu
+                          Anda:
+                          <ul class="mb-0 mt-2">
+                            <li>Membuat todo baru</li>
+                            <li>Menandai todo sebagai selesai</li>
+                            <li>Mencari dan memfilter todo</li>
+                            <li>Mendapatkan statistik todo</li>
+                            <li>Menghapus todo</li>
+                          </ul>
+                          Katakan saja apa yang ingin Anda lakukan!
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Typing Indicator -->
+                    <div
+                      class="typing-indicator"
+                      id="typingIndicator"
+                      style="padding: 0 20px"
+                    >
+                      <div class="message ai">
+                        <div class="message-bubble">
+                          <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="chat-input p-3 border-top">
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          class="form-control border-0"
+                          id="chatInput"
+                          placeholder="Ketik pesan Anda..."
+                          style="background-color: #f8f9fa"
+                        />
+                        <button
+                          class="btn btn-primary"
+                          id="sendChatBtn"
+                          type="button"
+                        >
+                          <i class="fas fa-paper-plane"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mt-4">
+                  <div class="col-md-6 mb-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                      <div class="card-body text-center">
+                        <i
+                          class="fas fa-plus-circle fa-2x text-primary mb-3"
+                        ></i>
+                        <h6>Tambah Cepat</h6>
+                        <p class="text-muted small">
+                          Katakan "Buat todo: [judul]"
+                        </p>
+                        <button
+                          class="btn btn-outline-primary btn-sm"
+                          onclick="addQuickMessage('Buat todo: ')"
+                        >
+                          Coba
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                      <div class="card-body text-center">
+                        <i class="fas fa-chart-bar fa-2x text-success mb-3"></i>
+                        <h6>Lihat Statistik</h6>
+                        <p class="text-muted small">
+                          Tanya "Tampilkan statistik todo saya"
+                        </p>
+                        <button
+                          class="btn btn-outline-success btn-sm"
+                          onclick="addQuickMessage('Tampilkan statistik todo saya')"
+                        >
+                          Coba
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 mb-0">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer">
+      <!-- Notifications will be added here -->
+    </div>
+
+    <!-- Add Todo Modal -->
+    <div class="modal fade" id="addTodoModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add New Todo</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="addTodoForm">
+              <div class="mb-3">
+                <label for="todoTitle" class="form-label">Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="todoTitle"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="todoDescription" class="form-label"
+                  >Description</label
+                >
+                <textarea
+                  class="form-control"
+                  id="todoDescription"
+                  rows="3"
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-primary" id="saveTodoBtn">
+              Save Todo
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Todo Modal -->
+    <div class="modal fade" id="editTodoModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Todo</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="editTodoForm">
+              <input type="hidden" id="editTodoId" />
+              <div class="mb-3">
+                <label for="editTodoTitle" class="form-label">Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editTodoTitle"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editTodoDescription" class="form-label"
+                  >Description</label
+                >
+                <textarea
+                  class="form-control"
+                  id="editTodoDescription"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="editTodoCompleted"
+                  />
+                  <label class="form-check-label" for="editTodoCompleted">
+                    Mark as completed
+                  </label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-primary" id="updateTodoBtn">
+              Update Todo
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      let todos = [];
+      let currentSection = "dashboard";
+      let selectedTodos = new Set();
+      let searchQuery = "";
+      let statusFilter = "all";
+      let sortBy = "newest";
+
+      // Utility functions for UI feedback
+      function showLoading() {
+        document.getElementById("loadingOverlay").style.display = "flex";
+      }
+
+      function hideLoading() {
+        document.getElementById("loadingOverlay").style.display = "none";
+      }
+
+      function showNotification(message, type = "success") {
+        const container = document.getElementById("notificationContainer");
+        const notification = document.createElement("div");
+        notification.className = `alert alert-${type} notification alert-dismissible fade show`;
+        notification.innerHTML = `
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        container.appendChild(notification);
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.remove();
+          }
+        }, 5000);
+      }
+
+      function showSuccess(message) {
+        showNotification(message, "success");
+      }
+
+      function showError(message) {
+        showNotification(message, "danger");
+      }
+
+      function showInfo(message) {
+        showNotification(message, "info");
+      }
+
+      function showWarning(message) {
+        showNotification(message, "warning");
+      }
+
+      // Enhanced error handling
+      function handleApiError(error, context = "operation") {
+        console.error(`Error in ${context}:`, error);
+        
+        let errorMessage = "Terjadi kesalahan. Silakan coba lagi.";
+        
+        if (error.message) {
+          if (error.message.includes("401")) {
+            errorMessage = "Sesi Anda telah berakhir. Silakan login kembali.";
+            setTimeout(() => {
+              localStorage.removeItem("authToken");
+              window.location.href = "/login";
+            }, 2000);
+          } else if (error.message.includes("403")) {
+            errorMessage = "Anda tidak memiliki izin untuk melakukan operasi ini.";
+          } else if (error.message.includes("404")) {
+            errorMessage = "Data tidak ditemukan.";
+          } else if (error.message.includes("500")) {
+            errorMessage = "Terjadi kesalahan server. Silakan coba lagi nanti.";
+          } else if (error.message.includes("network")) {
+            errorMessage = "Masalah koneksi jaringan. Periksa koneksi internet Anda.";
+          }
+        }
+        
+        showError(errorMessage);
+        return errorMessage;
+      }
+
+      // Check authentication
+      function checkAuth() {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          window.location.href = "/login";
+          return false;
+        }
+        return token;
+      }
+
+      // API helper function
+      async function apiRequest(url, options = {}) {
+        const token = localStorage.getItem("authToken");
+        const defaultOptions = {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        const response = await fetch(url, { ...defaultOptions, ...options });
+
+        if (response.status === 401) {
+          localStorage.removeItem("authToken");
+          window.location.href = "/login";
+          return;
+        }
+
+        return response.json();
+      }
+
+      // Load todos
+      async function loadTodos() {
+        try {
+          showLoading();
+          const result = await apiRequest("/api/todo/my-todos");
+          if (result.success) {
+            todos = result.data;
+            updateStats();
+            renderTodos();
+          } else {
+            showError("Failed to load todos: " + result.message);
+          }
+        } catch (error) {
+          console.error("Error loading todos:", error);
+          showError("Error loading todos. Please try again.");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      // Update statistics
+      function updateStats() {
+        const total = todos.length;
+        const completed = todos.filter((todo) => todo.completed).length;
+        const pending = total - completed;
+        const completionRate =
+          total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        document.getElementById("totalTodos").textContent = total;
+        document.getElementById("completedTodos").textContent = completed;
+        document.getElementById("pendingTodos").textContent = pending;
+        document.getElementById("completionRate").textContent =
+          completionRate + "%";
+      }
+
+      // Render todos
+      function renderTodos() {
+        const container = document.getElementById("todosContainer");
+        container.innerHTML = "";
+
+        // Filter and sort todos
+        let filteredTodos = filterAndSortTodos();
+
+        // Show search/filter controls for todos and completed sections
+        const searchContainer = document.getElementById("searchContainer");
+        searchContainer.style.display =
+          currentSection === "todos" || currentSection === "completed"
+            ? "block"
+            : "none";
+
+        // Update bulk actions visibility
+        updateBulkActionsVisibility();
+
+        // Add todo card (only in todos section and dashboard)
+        if (currentSection === "todos" || currentSection === "dashboard") {
+          container.innerHTML += `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card add-todo-card h-100 d-flex align-items-center justify-content-center" style="min-height: 200px;" onclick="openAddTodoModal()">
+                            <div class="text-center">
+                                <i class="fas fa-plus fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">Add New Todo</h5>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Render existing todos
+        if (
+          filteredTodos.length === 0 &&
+          (searchQuery || statusFilter !== "all")
+        ) {
+          container.innerHTML += `
+                    <div class="col-12">
+                        <div class="text-center py-5">
+                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No todos found</h5>
+                            <p class="text-muted">Try adjusting your search or filter criteria</p>
+                        </div>
+                    </div>
+                `;
+        }
+
+        filteredTodos.forEach((todo) => {
+          const isSelected = selectedTodos.has(todo.id);
+          container.innerHTML += `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card todo-card h-100 ${
+                          todo.completed ? "completed-todo" : ""
+                        } ${
+            isSelected ? "border-primary" : ""
+          }" style="position: relative;">
+                            ${
+                              currentSection === "todos" ||
+                              currentSection === "completed"
+                                ? `
+                            <input type="checkbox" class="form-check-input todo-item-checkbox" 
+                                   ${isSelected ? "checked" : ""} 
+                                   onchange="toggleTodoSelection(${todo.id})">
+                            `
+                                : ""
+                            }
+                            <div class="card-body" style="padding-left: ${
+                              currentSection === "todos" ||
+                              currentSection === "completed"
+                                ? "45px"
+                                : "20px"
+                            };">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title todo-title">${
+                                      todo.title
+                                    }</h6>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#" onclick="editTodo(${
+                                              todo.id
+                                            })">
+                                                <i class="fas fa-edit me-2"></i>Edit
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="toggleTodo(${
+                                              todo.id
+                                            })">
+                                                <i class="fas fa-${
+                                                  todo.completed
+                                                    ? "undo"
+                                                    : "check"
+                                                } me-2"></i>
+                                                ${
+                                                  todo.completed
+                                                    ? "Mark Pending"
+                                                    : "Mark Complete"
+                                                }
+                                            </a></li>
+                                            ${
+                                              !todo.completed
+                                                ? `
+                                            <li><a class="dropdown-item" href="#" onclick="markComplete(${todo.id})">
+                                                <i class="fas fa-check-circle me-2"></i>Complete
+                                            </a></li>
+                                            `
+                                                : `
+                                            <li><a class="dropdown-item" href="#" onclick="markPending(${todo.id})">
+                                                <i class="fas fa-clock me-2"></i>Mark Pending
+                                            </a></li>
+                                            `
+                                            }
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="deleteTodo(${
+                                              todo.id
+                                            })">
+                                                <i class="fas fa-trash me-2"></i>Delete
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <p class="card-text text-muted">${
+                                  todo.description || "No description"
+                                }</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        ${new Date(
+                                          todo.createdAt
+                                        ).toLocaleDateString()}
+                                    </small>
+                                    <span class="badge ${
+                                      todo.completed
+                                        ? "bg-success"
+                                        : "bg-warning"
+                                    }">
+                                        ${
+                                          todo.completed
+                                            ? "Completed"
+                                            : "Pending"
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        });
+      }
+
+      // Filter and sort todos
+      function filterAndSortTodos() {
+        let filteredTodos = [...todos];
+
+        // Filter by section
+        if (currentSection === "completed") {
+          filteredTodos = filteredTodos.filter((todo) => todo.completed);
+        } else if (currentSection === "todos") {
+          filteredTodos = filteredTodos.filter((todo) => !todo.completed);
+        }
+
+        // Filter by status
+        if (statusFilter === "pending") {
+          filteredTodos = filteredTodos.filter((todo) => !todo.completed);
+        } else if (statusFilter === "completed") {
+          filteredTodos = filteredTodos.filter((todo) => todo.completed);
+        }
+
+        // Filter by search query
+        if (searchQuery) {
+          filteredTodos = filteredTodos.filter(
+            (todo) =>
+              todo.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              (todo.description &&
+                todo.description
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase()))
+          );
+        }
+
+        // Sort todos
+        filteredTodos.sort((a, b) => {
+          switch (sortBy) {
+            case "oldest":
+              return new Date(a.createdAt) - new Date(b.createdAt);
+            case "title":
+              return a.title.localeCompare(b.title);
+            case "title-desc":
+              return b.title.localeCompare(a.title);
+            case "newest":
+            default:
+              return new Date(b.createdAt) - new Date(a.createdAt);
+          }
+        });
+
+        return filteredTodos;
+      }
+
+      // Todo selection functions
+      function toggleTodoSelection(id) {
+        if (selectedTodos.has(id)) {
+          selectedTodos.delete(id);
+        } else {
+          selectedTodos.add(id);
+        }
+        updateBulkActionsVisibility();
+        renderTodos(); // Re-render to update visual selection
+      }
+
+      function updateBulkActionsVisibility() {
+        const bulkActions = document.getElementById("bulkActions");
+        const selectedCount = document.getElementById("selectedCount");
+
+        if (selectedTodos.size > 0) {
+          bulkActions.style.display = "block";
+          selectedCount.textContent = `${selectedTodos.size} item${
+            selectedTodos.size !== 1 ? "s" : ""
+          } selected`;
+        } else {
+          bulkActions.style.display = "none";
+        }
+      }
+
+      function clearSelection() {
+        selectedTodos.clear();
+        updateBulkActionsVisibility();
+        renderTodos();
+      }
+
+      // Additional todo operations
+      async function markComplete(id) {
+        try {
+          showLoading();
+          const result = await apiRequest(`/api/todo/complete/${id}`, {
+            method: "PUT",
+          });
+
+          if (result.success) {
+            loadTodos();
+            showSuccess("Todo marked as completed!");
+          } else {
+            showError("Failed to complete todo: " + result.message);
+          }
+        } catch (error) {
+          console.error("Error completing todo:", error);
+          showError("Error completing todo. Please try again.");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      async function markPending(id) {
+        try {
+          showLoading();
+          const result = await apiRequest(`/api/todo/uncomplete/${id}`, {
+            method: "PUT",
+          });
+
+          if (result.success) {
+            loadTodos();
+            showSuccess("Todo marked as pending!");
+          } else {
+            showError("Failed to mark todo as pending: " + result.message);
+          }
+        } catch (error) {
+          console.error("Error marking todo as pending:", error);
+          showError("Error updating todo. Please try again.");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      // Bulk operations
+      async function bulkComplete() {
+        if (selectedTodos.size === 0) return;
+
+        try {
+          showLoading();
+          const promises = Array.from(selectedTodos).map((id) =>
+            apiRequest(`/api/todo/complete/${id}`, { method: "PUT" })
+          );
+
+          await Promise.all(promises);
+          clearSelection();
+          loadTodos();
+          showSuccess(`${selectedTodos.size} todos marked as completed!`);
+        } catch (error) {
+          console.error("Error in bulk complete:", error);
+          showError("Error completing todos. Please try again.");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      async function bulkMarkPending() {
+        if (selectedTodos.size === 0) return;
+
+        try {
+          showLoading();
+          const promises = Array.from(selectedTodos).map((id) =>
+            apiRequest(`/api/todo/uncomplete/${id}`, { method: "PUT" })
+          );
+
+          await Promise.all(promises);
+          clearSelection();
+          loadTodos();
+          showSuccess(`${selectedTodos.size} todos marked as pending!`);
+        } catch (error) {
+          console.error("Error in bulk mark pending:", error);
+          showError("Error updating todos. Please try again.");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      async function bulkDelete() {
+        if (selectedTodos.size === 0) return;
+
+        if (
+          !confirm(
+            `Are you sure you want to delete ${selectedTodos.size} selected todos?`
+          )
+        )
+          return;
+
+        try {
+          showLoading();
+          const promises = Array.from(selectedTodos).map((id) =>
+            apiRequest(`/api/todo/delete/${id}`, { method: "DELETE" })
+          );
+
+          await Promise.all(promises);
+          clearSelection();
+          loadTodos();
+          showSuccess(`${selectedTodos.size} todos deleted successfully!`);
+        } catch (error) {
+          console.error("Error in bulk delete:", error);
+          showError("Error deleting todos. Please try again.");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      // Section navigation
+      function switchSection(section) {
+        currentSection = section;
+
+        // Clear selections and reset filters when switching sections
+        clearSelection();
+        searchQuery = "";
+        statusFilter = "all";
+        sortBy = "newest";
+
+        // Reset filter controls
+        const searchInput = document.getElementById("searchInput");
+        const statusFilterSelect = document.getElementById("statusFilter");
+        const sortBySelect = document.getElementById("sortBy");
+
+        if (searchInput) searchInput.value = "";
+        if (statusFilterSelect) statusFilterSelect.value = "all";
+        if (sortBySelect) sortBySelect.value = "newest";
+
+        // Update active nav
+        document.querySelectorAll(".nav-link").forEach((link) => {
+          link.classList.remove("active");
+        });
+        document
+          .querySelector(`[data-section="${section}"]`)
+          .classList.add("active");
+
+        // Update page title
+        const titles = {
+          dashboard: { title: "Dashboard", subtitle: "Overview of your todos" },
+          todos: { title: "My Todos", subtitle: "Manage your pending tasks" },
+          completed: { title: "Completed", subtitle: "Your finished tasks" },
+          agent: { title: "Agent Mode", subtitle: "AI Todo Assistant" },
+          settings: { title: "Settings", subtitle: "Manage your preferences" },
+        };
+
+        document.getElementById("pageTitle").textContent =
+          titles[section].title;
+        document.getElementById("pageSubtitle").textContent =
+          titles[section].subtitle;
+
+        // Show/hide stats section
+        document.getElementById("statsSection").style.display =
+          section === "dashboard" ? "block" : "none";
+
+        // Show/hide todos container and agent section
+        document.getElementById("todosContainer").style.display =
+          section === "agent" ? "none" : "block";
+        document.getElementById("agentSection").style.display =
+          section === "agent" ? "block" : "none";
+
+        // Show settings content or todos
+        showSectionContent(section);
+
+        renderTodos();
+      }
+
+      // Show section-specific content
+      function showSectionContent(section) {
+        const todosContainer = document.getElementById("todosContainer");
+
+        if (section === "settings") {
+          // Show settings content instead of todos
+          todosContainer.innerHTML = `
+            <div class="col-12">
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-user me-2"></i>Profile Information</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Username</h6>
+                        </div>
+                        <div class="col-sm-9 text-muted" id="profileUsername">
+                          Loading...
+                        </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Role</h6>
+                        </div>
+                        <div class="col-sm-9 text-muted" id="profileRole">
+                          Loading...
+                        </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Total Todos</h6>
+                        </div>
+                        <div class="col-sm-9 text-muted">
+                          ${todos.length}
+                        </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Completed</h6>
+                        </div>
+                        <div class="col-sm-9 text-muted">
+                          ${todos.filter((t) => t.completed).length}
+                        </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Pending</h6>
+                        </div>
+                        <div class="col-sm-9 text-muted">
+                          ${todos.filter((t) => !t.completed).length}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" onclick="loadTodos(); showSuccess('Data refreshed!');">
+                          <i class="fas fa-sync-alt me-2"></i>Refresh Data
+                        </button>
+                        <button class="btn btn-outline-success" onclick="switchSection('todos')">
+                          <i class="fas fa-plus me-2"></i>Add New Todo
+                        </button>
+                        <button class="btn btn-outline-info" onclick="switchSection('completed')">
+                          <i class="fas fa-check-circle me-2"></i>View Completed
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="logout()">
+                          <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+
+          // Load user profile info
+          loadProfileInfo();
+        }
+      }
+
+      // Load profile information for settings page
+      async function loadProfileInfo() {
+        try {
+          const token = localStorage.getItem("authToken");
+          if (token) {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            document.getElementById("profileUsername").textContent =
+              payload.sub || "Unknown";
+            document.getElementById("profileRole").textContent =
+              payload.role || "USER";
+          }
+        } catch (error) {
+          console.error("Error loading profile info:", error);
+          document.getElementById("profileUsername").textContent =
+            "Error loading";
+          document.getElementById("profileRole").textContent = "Error loading";
+        }
+      }
+
+      // Modal functions
+      function openAddTodoModal() {
+        new bootstrap.Modal(document.getElementById("addTodoModal")).show();
+      }
+
+      async function saveTodo() {
+        const title = document.getElementById("todoTitle").value.trim();
+        const description = document
+          .getElementById("todoDescription")
+          .value.trim();
+
+        if (!title) {
+          showError("Title is required");
+          return;
+        }
+
+        try {
+          showLoading();
+          const result = await apiRequest("/api/todo/add", {
+            method: "POST",
+            body: JSON.stringify({ title, description }),
+          });
+
+          if (result.success) {
+            bootstrap.Modal.getInstance(
+              document.getElementById("addTodoModal")
+            ).hide();
+            document.getElementById("addTodoForm").reset();
+            loadTodos();
+            showSuccess("Todo created successfully!");
+          } else {
+            showError("Failed to create todo: " + result.message);
+          }
+        } catch (error) {
+          console.error("Error saving todo:", error);
+          showError("Error creating todo. Please try again.");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      function editTodo(id) {
+        const todo = todos.find((t) => t.id === id);
+        if (!todo) return;
+
+        document.getElementById("editTodoId").value = todo.id;
+        document.getElementById("editTodoTitle").value = todo.title;
+        document.getElementById("editTodoDescription").value =
+          todo.description || "";
+        document.getElementById("editTodoCompleted").checked = todo.completed;
+
+        new bootstrap.Modal(document.getElementById("editTodoModal")).show();
+      }
+
+      async function updateTodo() {
+        const id = document.getElementById("editTodoId").value;
+        const title = document.getElementById("editTodoTitle").value.trim();
+        const description = document
+          .getElementById("editTodoDescription")
+          .value.trim();
+        const completed = document.getElementById("editTodoCompleted").checked;
+
+        if (!title) {
+          showError("Title is required");
+          return;
+        }
+
+        try {
+          showLoading();
+          const result = await apiRequest(`/api/todo/update/${id}`, {
+            method: "PUT",
+            body: JSON.stringify({ title, description, completed }),
+          });
+
+          if (result.success) {
+            bootstrap.Modal.getInstance(
+              document.getElementById("editTodoModal")
+            ).hide();
+            loadTodos();
+            showSuccess("Todo updated successfully!");
+          } else {
+            showError("Failed to update todo: " + result.message);
+          }
+        } catch (error) {
+          console.error("Error updating todo:", error);
+          showError("Error updating todo. Please try again.");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      async function toggleTodo(id) {
+        try {
+          showLoading();
+          const result = await apiRequest(`/api/todo/toggle/${id}`, {
+            method: "PUT",
+          });
+
+          if (result.success) {
+            loadTodos();
+            showSuccess("Todo status updated!");
+          } else {
+            showError("Failed to toggle todo: " + result.message);
+          }
+        } catch (error) {
+          console.error("Error toggling todo:", error);
+          showError("Error updating todo status. Please try again.");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      async function deleteTodo(id) {
+        if (!confirm("Are you sure you want to delete this todo?")) return;
+
+        try {
+          showLoading();
+          const result = await apiRequest(`/api/todo/delete/${id}`, {
+            method: "DELETE",
+          });
+
+          if (result.success) {
+            loadTodos();
+            showSuccess("Todo deleted successfully!");
+          } else {
+            showError("Failed to delete todo: " + result.message);
+          }
+        } catch (error) {
+          console.error("Error deleting todo:", error);
+          showError("Error deleting todo. Please try again.");
+        } finally {
+          hideLoading();
+        }
+      }
+
+      function logout() {
+        localStorage.removeItem("authToken");
+        window.location.href = "/login";
+      }
+
+      // Load user information
+      async function loadUserInfo() {
+        try {
+          const token = localStorage.getItem("authToken");
+          if (token) {
+            // Decode JWT to get user info (simple decode, in production use proper JWT library)
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            document.getElementById("userDisplayName").textContent =
+              payload.sub || "User";
+          }
+        } catch (error) {
+          console.error("Error loading user info:", error);
+          document.getElementById("userDisplayName").textContent = "User";
+        }
+      }
+
+      // Event listeners
+      document.addEventListener("DOMContentLoaded", function () {
+        if (!checkAuth()) return;
+
+        // Load initial data
+        loadTodos();
+
+        // Set up navigation
+        document.querySelectorAll("[data-section]").forEach((link) => {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            switchSection(this.dataset.section);
+          });
+        });
+
+        // Set up modal buttons
+        document
+          .getElementById("addTodoBtn")
+          .addEventListener("click", openAddTodoModal);
+        document
+          .getElementById("saveTodoBtn")
+          .addEventListener("click", saveTodo);
+        document
+          .getElementById("updateTodoBtn")
+          .addEventListener("click", updateTodo);
+        document.getElementById("logoutBtn").addEventListener("click", logout);
+
+        // Set up refresh button
+        document
+          .getElementById("refreshBtn")
+          .addEventListener("click", function () {
+            clearSelection();
+            loadTodos();
+            showInfo("Todos refreshed!");
+          });
+
+        // Set up search and filter
+        const searchInput = document.getElementById("searchInput");
+        const statusFilterSelect = document.getElementById("statusFilter");
+        const sortBySelect = document.getElementById("sortBy");
+
+        searchInput.addEventListener("input", function () {
+          searchQuery = this.value;
+          renderTodos();
+        });
+
+        statusFilterSelect.addEventListener("change", function () {
+          statusFilter = this.value;
+          renderTodos();
+        });
+
+        sortBySelect.addEventListener("change", function () {
+          sortBy = this.value;
+          renderTodos();
+        });
+
+        // Set up bulk action buttons
+        document
+          .getElementById("bulkCompleteBtn")
+          .addEventListener("click", bulkComplete);
+        document
+          .getElementById("bulkPendingBtn")
+          .addEventListener("click", bulkMarkPending);
+        document
+          .getElementById("bulkDeleteBtn")
+          .addEventListener("click", bulkDelete);
+        document
+          .getElementById("clearSelectionBtn")
+          .addEventListener("click", clearSelection);
+
+        // Set up chatbot
+        setupChatbot();
+
+        // Set up Agent Mode
+        setupAgentMode();
+
+        // Load user info
+        loadUserInfo();
+      });
+
+      // Chatbot functionality
+      let chatbotOpen = false;
+      let chatHistory = [];
+
+      // Agent Mode Setup
+      function setupAgentMode() {
+        // Set up chat input for Agent Mode
+        const agentChatInput = document.querySelector(
+          "#agentSection #chatInput"
+        );
+        const agentSendBtn = document.querySelector(
+          "#agentSection #sendChatBtn"
+        );
+        const clearChatBtn = document.getElementById("clearChatBtn");
+
+        if (agentChatInput) {
+          agentChatInput.addEventListener("keypress", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendAgentMessage();
+            }
+          });
+        }
+
+        if (agentSendBtn) {
+          agentSendBtn.addEventListener("click", sendAgentMessage);
+        }
+
+        if (clearChatBtn) {
+          clearChatBtn.addEventListener("click", clearAgentChat);
+        }
+      }
+
+      function setupChatbot() {
+        document
+          .getElementById("chatbotToggle")
+          .addEventListener("click", toggleChatbot);
+        document
+          .getElementById("chatbotClose")
+          .addEventListener("click", toggleChatbot);
+        document
+          .getElementById("chatInput")
+          .addEventListener("keypress", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          });
+        document
+          .getElementById("sendBtn")
+          .addEventListener("click", sendMessage);
+
+        // Add welcome message
+        addMessage(
+          "ai",
+          "Hello! I'm your AI todo assistant. I can help you create, manage, and organize your todos. What would you like to do today?"
+        );
+      }
+
+      function toggleChatbot() {
+        const chatbotWindow = document.getElementById("chatbotWindow");
+        const chatbotToggle = document.getElementById("chatbotToggle");
+
+        chatbotOpen = !chatbotOpen;
+
+        if (chatbotOpen) {
+          chatbotWindow.style.display = "flex";
+          chatbotToggle.innerHTML = '<i class="fas fa-times"></i>';
+        } else {
+          chatbotWindow.style.display = "none";
+          chatbotToggle.innerHTML = '<i class="fas fa-comment"></i>';
+        }
+      }
+
+      function addMessage(type, content) {
+        const messagesContainer = document.getElementById("chatMessages");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${type}`;
+
+        const bubbleDiv = document.createElement("div");
+        bubbleDiv.className = "message-bubble";
+        bubbleDiv.innerHTML = content.replace(/\n/g, "<br>");
+
+        messageDiv.appendChild(bubbleDiv);
+        messagesContainer.appendChild(messageDiv);
+
+        // Scroll to bottom
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // Store in history
+        chatHistory.push({ type, content });
+      }
+
+      function showTypingIndicator() {
+        const messagesContainer = document.getElementById("chatMessages");
+        const typingDiv = document.createElement("div");
+        typingDiv.id = "typingIndicator";
+        typingDiv.className = "typing-indicator";
+        typingDiv.innerHTML = `
+          <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        `;
+        typingDiv.style.display = "block";
+        messagesContainer.appendChild(typingDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+
+      function hideTypingIndicator() {
+        const typingIndicator = document.getElementById("typingIndicator");
+        if (typingIndicator) {
+          typingIndicator.remove();
+        }
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        // Add user message
+        addMessage("user", message);
+        input.value = "";
+
+        // Show typing indicator
+        showTypingIndicator();
+
+        try {
+          const response = await apiRequest("/api/agent/chat", {
+            method: "POST",
+            body: JSON.stringify({ message: message }),
+          });
+
+          hideTypingIndicator();
+
+          if (response.success) {
+            addMessage("ai", response.data.message);
+
+            // Handle suggested actions
+            if (response.data.actions && response.data.actions.actionable) {
+              showActionSuggestion(response.data.actions.suggested_action);
+            }
+          } else {
+            addMessage(
+              "ai",
+              "I'm sorry, I encountered an error. Please try again."
+            );
+          }
+        } catch (error) {
+          hideTypingIndicator();
+          addMessage(
+            "ai",
+            "I'm having trouble connecting right now. Please try again later."
+          );
+          console.error("Chatbot error:", error);
+        }
+      }
+
+      function showActionSuggestion(action) {
+        const messagesContainer = document.getElementById("chatMessages");
+        const actionDiv = document.createElement("div");
+        actionDiv.className = "message ai";
+
+        let actionButtons = "";
+        switch (action) {
+          case "create_todo":
+            actionButtons = `<button class="btn btn-primary btn-sm me-2" onclick="openAddTodoModal(); toggleChatbot();">Create Todo</button>`;
+            break;
+          case "list_todos":
+            actionButtons = `<button class="btn btn-primary btn-sm me-2" onclick="switchSection('todos'); toggleChatbot();">View All Todos</button>`;
+            break;
+          case "get_statistics":
+            actionButtons = `<button class="btn btn-primary btn-sm me-2" onclick="switchSection('dashboard'); toggleChatbot();">View Statistics</button>`;
+            break;
+        }
+
+        if (actionButtons) {
+          actionDiv.innerHTML = `
+            <div class="message-bubble">
+              <small class="text-muted">Quick Actions:</small><br>
+              ${actionButtons}
+            </div>
+          `;
+          messagesContainer.appendChild(actionDiv);
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+      }
+
+      // Agent Mode Functions
+      function addQuickMessage(message) {
+        const chatInput = document.querySelector("#agentSection #chatInput");
+        if (chatInput) {
+          chatInput.value = message;
+          chatInput.focus();
+        }
+      }
+
+      function addAgentMessage(sender, content) {
+        const messagesContainer = document.querySelector(
+          "#agentSection #chatMessages"
+        );
+        if (!messagesContainer) return;
+
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${sender}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = "message-bubble";
+
+        if (sender === "ai") {
+          bubble.innerHTML = `<i class="fas fa-robot me-2"></i>${content}`;
+        } else {
+          bubble.textContent = content;
+        }
+
+        messageDiv.appendChild(bubble);
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+
+      function showAgentTyping() {
+        const typingIndicator = document.querySelector(
+          "#agentSection #typingIndicator"
+        );
+        if (typingIndicator) {
+          typingIndicator.style.display = "block";
+        }
+      }
+
+      function hideAgentTyping() {
+        const typingIndicator = document.querySelector(
+          "#agentSection #typingIndicator"
+        );
+        if (typingIndicator) {
+          typingIndicator.style.display = "none";
+        }
+      }
+
+      async function sendAgentMessage() {
+        const chatInput = document.querySelector("#agentSection #chatInput");
+        const message = chatInput.value.trim();
+
+        if (!message) return;
+
+        // Add user message
+        addAgentMessage("user", message);
+        chatInput.value = "";
+
+        // Show typing indicator
+        showAgentTyping();
+
+        try {
+          const response = await apiRequest("/api/agent/chat", {
+            method: "POST",
+            body: JSON.stringify({
+              message: message,
+              language: "id", // Indonesian language
+              auto_execute: true, // Enable auto execute
+            }),
+          });
+
+          hideAgentTyping();
+
+          if (response.success) {
+            // Add AI response in Indonesian
+            const aiMessage =
+              response.data.message ||
+              response.data.response ||
+              "Maaf, saya tidak memahami permintaan Anda.";
+            addAgentMessage("ai", aiMessage);
+
+            // Check if there are actionable commands
+            if (response.data.actions && response.data.actions.actionable) {
+              console.log("Actions detected:", response.data.actions);
+              console.log("Auto execute flag:", response.data.auto_execute);
+
+              if (response.data.auto_execute) {
+                console.log(
+                  "Auto executing action:",
+                  response.data.actions.suggested_action
+                );
+                // Auto execution disabled on frontend
+                // await autoExecuteAction(response.data.actions);
+                console.debug('autoExecuteAction suppressed on main-dashboard');
+              } else {
+                console.log(
+                  "Showing action suggestion instead of auto-executing"
+                );
+                // Show action suggestion
+                handleAgentAction(response.data.actions);
+              }
+            } else {
+              console.log(
+                "No actionable actions found - acting as regular chatbot"
+              );
+              // No actionable commands, just act as regular chatbot
+              // Don't show any action buttons or suggestions
+            }
+
+            // Refresh todos if needed
+            if (response.data.refresh_todos) {
+              loadTodos();
+              addAgentMessage("ai", "✅ Data todo telah diperbarui!");
+            }
+          } else {
+            addAgentMessage(
+              "ai",
+              "Maaf, saya mengalami kesalahan. Silakan coba lagi."
+            );
+          }
+        } catch (error) {
+          hideAgentTyping();
+          addAgentMessage(
+            "ai",
+            "Maaf, saya mengalami masalah koneksi. Silakan coba lagi nanti."
+          );
+          console.error("Agent error:", error);
+        }
+      }
+
+      // Auto execute disabled in legacy dashboard; keep stub to avoid errors
+      async function autoExecuteAction(actions) {
+        console.debug('autoExecuteAction suppressed on legacy dashboard', actions);
+        // Present quick-actions instead of executing
+        handleAgentAction(actions || {});
+      }
+
+      function handleAgentAction(actions) {
+        // Handle different types of actions from AI
+        if (actions.suggested_action) {
+          const actionDiv = document.createElement("div");
+          actionDiv.className = "mt-2";
+
+          let buttons = "";
+          switch (actions.suggested_action) {
+            case "create_todo":
+              buttons = `<button class="btn btn-primary btn-sm" onclick="openAddTodoModal()">Buat Todo</button>`;
+              break;
+            case "list_todos":
+              buttons = `<button class="btn btn-primary btn-sm" onclick="displayTodosInChat()">Lihat Todo</button>`;
+              break;
+            case "get_statistics":
+              buttons = `<button class="btn btn-primary btn-sm" onclick="displayStatsInChat()">Lihat Statistik</button>`;
+              break;
+          }
+
+          if (buttons) {
+            actionDiv.innerHTML = `<small class="text-muted">Aksi cepat:</small><br>${buttons}`;
+            const lastMessage = document.querySelector(
+              "#agentSection #chatMessages .message:last-child .message-bubble"
+            );
+            if (lastMessage) {
+              lastMessage.appendChild(actionDiv);
+            }
+          }
+        }
+      }
+
+      function clearAgentChat() {
+        const messagesContainer = document.querySelector(
+          "#agentSection #chatMessages"
+        );
+        if (messagesContainer) {
+          messagesContainer.innerHTML = `
+            <div class="message ai">
+              <div class="message-bubble">
+                <i class="fas fa-robot me-2"></i>
+                Halo! Saya Asisten AI Todo Anda. Saya dapat membantu Anda:
+                <ul class="mb-0 mt-2">
+                  <li>Membuat todo baru</li>
+                  <li>Menandai todo sebagai selesai</li>
+                  <li>Mencari dan memfilter todo</li>
+                  <li>Mendapatkan statistik todo</li>
+                  <li>Menghapus todo</li>
+                </ul>
+                Katakan saja apa yang ingin Anda lakukan!
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      // Display todos in chat without changing page
+      function displayTodosInChat() {
+        if (todos.length === 0) {
+          addAgentMessage(
+            "ai",
+            "📝 Anda belum memiliki todo apapun. Katakan 'Buat todo: [judul]' untuk membuat yang pertama!"
+          );
+          return;
+        }
+
+        let todoList = "📝 **Daftar Todo Anda:**\n\n";
+        todos.forEach((todo, index) => {
+          const status = todo.completed ? "✅" : "⏳";
+          todoList += `${index + 1}. ${status} **${todo.title}**\n`;
+          if (todo.description) {
+            todoList += `   📋 ${todo.description}\n`;
+          }
+          todoList += "\n";
+        });
+
+        const completedCount = todos.filter((t) => t.completed).length;
+        const pendingCount = todos.length - completedCount;
+
+        todoList += `\n📊 **Ringkasan:** ${todos.length} total, ${completedCount} selesai, ${pendingCount} pending`;
+
+        addAgentMessage("ai", todoList);
+      }
+
+      // Display statistics in chat without changing page
+      function displayStatsInChat() {
+        if (todos.length === 0) {
+          addAgentMessage(
+            "ai",
+            "📊 Anda belum memiliki todo apapun untuk ditampilkan statistiknya."
+          );
+          return;
+        }
+
+        const total = todos.length;
+        const completed = todos.filter((t) => t.completed).length;
+        const pending = total - completed;
+        const completionRate =
+          total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        let statsMessage = "📊 **Statistik Todo Anda:**\n\n";
+        statsMessage += `📝 **Total Todo:** ${total}\n`;
+        statsMessage += `✅ **Selesai:** ${completed}\n`;
+        statsMessage += `⏳ **Pending:** ${pending}\n`;
+        statsMessage += `📈 **Tingkat Penyelesaian:** ${completionRate}%\n\n`;
+
+        if (completionRate >= 80) {
+          statsMessage += "🎉 Luar biasa! Anda sangat produktif!";
+        } else if (completionRate >= 50) {
+          statsMessage += "👍 Bagus! Terus tingkatkan produktivitas Anda!";
+        } else if (total > 0) {
+          statsMessage += "💪 Semangat! Mari selesaikan lebih banyak todo!";
+        }
+
+        addAgentMessage("ai", statsMessage);
+      }
+    </script>
+
+    <!-- Chatbot Container -->
+    <div class="chatbot-container">
+      <button class="chatbot-toggle" id="chatbotToggle">
+        <i class="fas fa-comment"></i>
+      </button>
+
+      <div class="chatbot-window" id="chatbotWindow">
+        <div class="chatbot-header">
+          <div>
+            <i class="fas fa-robot me-2"></i>
+            <strong>AI Assistant</strong>
+          </div>
+          <button class="btn btn-sm text-white" id="chatbotClose">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="chatbot-messages" id="chatMessages">
+          <!-- Messages will be added here -->
+        </div>
+
+        <div class="chatbot-input">
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              id="chatInput"
+              placeholder="Ask me anything about your todos..."
+              maxlength="500"
+            />
+            <button class="btn btn-primary" id="sendBtn">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

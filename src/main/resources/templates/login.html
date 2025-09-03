@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Todo App</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+      }
+      .login-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        padding: 2rem;
+        max-width: 400px;
+        width: 100%;
+      }
+      .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+      }
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="login-card">
+            <div class="text-center mb-4">
+              <i class="fas fa-tasks fa-3x text-primary mb-3"></i>
+              <h3 class="fw-bold">Welcome Back!</h3>
+              <p class="text-muted">Sign in to your account</p>
+            </div>
+
+            <div id="alert-container"></div>
+
+            <form id="loginForm">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fas fa-user"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="username"
+                    name="username"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fas fa-lock"></i>
+                  </span>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    required
+                  />
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    id="togglePassword"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="d-grid mb-3">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  id="loginBtn"
+                >
+                  <span
+                    class="spinner-border spinner-border-sm d-none"
+                    id="loginSpinner"
+                  ></span>
+                  Sign In
+                </button>
+              </div>
+            </form>
+
+            <div class="text-center">
+              <p class="text-muted">
+                Don't have an account?
+                <a href="/register" class="text-decoration-none fw-bold"
+                  >Sign up here</a
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Toggle password visibility
+      document
+        .getElementById("togglePassword")
+        .addEventListener("click", function () {
+          const password = document.getElementById("password");
+          const icon = this.querySelector("i");
+
+          if (password.type === "password") {
+            password.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+          } else {
+            password.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+          }
+        });
+
+      // Login form submission
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const loginBtn = document.getElementById("loginBtn");
+          const loginSpinner = document.getElementById("loginSpinner");
+          const alertContainer = document.getElementById("alert-container");
+
+          // Show loading state
+          loginSpinner.classList.remove("d-none");
+          loginBtn.disabled = true;
+
+          const formData = {
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value,
+          };
+
+          try {
+            const response = await fetch("/api/auth/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formData),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+              // Store token in localStorage
+              localStorage.setItem("authToken", result.data.token);
+
+              // Show success message
+              alertContainer.innerHTML = `
+                        <div class="alert alert-success" role="alert">
+                            <i class="fas fa-check-circle"></i> Login successful! Redirecting...
+                        </div>
+                    `;
+
+              // Redirect to dashboard
+              setTimeout(() => {
+                window.location.href = "/dashboard";
+              }, 1000);
+            } else {
+              // Show error message
+              alertContainer.innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-circle"></i> ${result.message}
+                        </div>
+                    `;
+            }
+          } catch (error) {
+            alertContainer.innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-circle"></i> An error occurred. Please try again.
+                    </div>
+                `;
+          } finally {
+            // Hide loading state
+            loginSpinner.classList.add("d-none");
+            loginBtn.disabled = false;
+          }
+        });
+    </script>
+  </body>
+</html>

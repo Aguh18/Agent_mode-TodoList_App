@@ -12,4 +12,5 @@ import com.example.demo.model.UserEntity;
 public interface TodoRepository extends JpaRepository<TodoEntity, Long> {
 
     List<TodoEntity> findByUser(UserEntity user);
+    List<TodoEntity> findByUserOrderByCreatedAtDesc(UserEntity user);
 }

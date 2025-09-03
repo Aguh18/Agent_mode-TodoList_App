@@ -22,8 +22,23 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        // ✅ Jangan filter request ke /api/auth/**
-        return request.getServletPath().startsWith("/api/auth/");
+        String path = request.getServletPath();
+        
+        // Skip filter untuk:
+        // - Authentication endpoints
+        // - Static resources (CSS, JS, images)
+        // - Public pages (login, register, home)
+        return path.startsWith("/api/auth/") ||
+               path.startsWith("/css/") ||
+               path.startsWith("/js/") ||
+               path.startsWith("/images/") ||
+               path.startsWith("/static/") ||
+               path.equals("/login") ||
+               path.equals("/register") ||
+               path.equals("/") ||
+               path.equals("/dashboard") ||
+               path.equals("/error") ||
+               path.equals("/favicon.ico");
     }
 
     @Override
@@ -33,29 +48,35 @@ public class SecurityFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
+        String path = request.getServletPath();
 
-        // 🚨 Kalau tidak ada token → langsung 401
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
-            response.getWriter().write("Unauthorized - Missing or invalid Authorization header");
-            return; // hentikan filter
-        }
-
-        String token = authHeader.substring(7);
-
-        // 🚨 Kalau token invalid / expired → 401
-        if (!jwtUtils.validateToken(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
-            response.getWriter().write("Unauthorized - Token expired or invalid");
+        // Untuk halaman dashboard, biarkan halaman load dulu (JavaScript akan handle auth)
+        if (path.equals("/dashboard")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
-        // ✅ Kalau valid → set Authentication
-        String username = jwtUtils.getUsernameFromToken(token);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null,
-                new ArrayList<>());
+        // Untuk API endpoints, wajib ada token
+        if (path.startsWith("/api/") && !path.startsWith("/api/auth/")) {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Unauthorized - Missing or invalid Authorization header");
+                return;
+            }
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            String token = authHeader.substring(7);
+
+            if (!jwtUtils.validateToken(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Unauthorized - Token expired or invalid");
+                return;
+            }
+
+            String username = jwtUtils.getUsername(token);
+            UsernamePasswordAuthenticationToken authentication = 
+                new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
         filterChain.doFilter(request, response);
     }

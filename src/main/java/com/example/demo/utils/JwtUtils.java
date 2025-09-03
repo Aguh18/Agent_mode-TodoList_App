@@ -5,10 +5,12 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class JwtUtils {
@@ -20,27 +22,54 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateToken(String username) {
+    // === Generate Token ===
+    public String generateToken(String username, Long userId, String role) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("userId", userId)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String getUsernameFromToken(String token) {
+    // === Ambil token dari Authorization Header ===
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    // === Extract Claims ===
+    public Claims getAllClaimsFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
     }
 
+    // === Getters ===
+    public String getUsername(String token) {
+        return getAllClaimsFromToken(token).getSubject();
+    }
+
+    public Long getUserId(String token) {
+        Object userIdObj = getAllClaimsFromToken(token).get("userId");
+        return (userIdObj instanceof Number) ? ((Number) userIdObj).longValue() : null;
+    }
+
+    public String getRole(String token) {
+        return (String) getAllClaimsFromToken(token).get("role");
+    }
+
+    // === Validate ===
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+            getAllClaimsFromToken(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;

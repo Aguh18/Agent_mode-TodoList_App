@@ -44,7 +44,7 @@ public class AuthController {
             return ResponseUtils.fail("Username atau password salah", HttpStatus.UNAUTHORIZED);
         }
 
-        String token = jwtUtils.generateToken(user.getUsername());
+        String token = jwtUtils.generateToken(user.getUsername(), user.getId(), user.getRole());
 
         return ResponseUtils.ok("Login berhasil", new LoginResponse(token));
     }
