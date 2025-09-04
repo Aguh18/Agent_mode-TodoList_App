@@ -38,12 +38,13 @@ public class TodoController {
     @PostMapping("add")
     public ResponseEntity<?> addTodo(@RequestBody CreateTodoRequest request, HttpServletRequest httpRequest) {
         try {
-            String username = getUsernameFromToken(httpRequest);
-            if (username == null) {
+            // Ambil userId dari JWT token
+            Long userId = jwtUtils.getUserIdFromRequest(httpRequest);
+            if (userId == null) {
                 return ResponseUtils.fail("User not authenticated", HttpStatus.UNAUTHORIZED);
             }
 
-            TodoEntity todo = todoService.create(username, request);
+            TodoEntity todo = todoService.createByUserId(userId, request);
             return ResponseUtils.ok("Todo created successfully", todo);
 
         } catch (Exception e) {
@@ -56,12 +57,13 @@ public class TodoController {
     @GetMapping("my-todos")
     public ResponseEntity<?> getMyTodos(HttpServletRequest request) {
         try {
-            String username = getUsernameFromToken(request);
-            if (username == null) {
+            // Ambil userId dari JWT token
+            Long userId = jwtUtils.getUserIdFromRequest(request);
+            if (userId == null) {
                 return ResponseUtils.fail("User not authenticated", HttpStatus.UNAUTHORIZED);
             }
 
-            List<TodoEntity> todos = todoService.getMyTodos(username);
+            List<TodoEntity> todos = todoService.getMyTodosByUserId(userId);
             return ResponseUtils.ok("Todos retrieved successfully", todos);
 
         } catch (Exception e) {
@@ -74,12 +76,13 @@ public class TodoController {
     @PutMapping("update/{id}")
     public ResponseEntity<?> updateTodo(@PathVariable Long id, @RequestBody UpdateTodoRequest request, HttpServletRequest httpRequest) {
         try {
-            String username = getUsernameFromToken(httpRequest);
-            if (username == null) {
+            // Ambil userId dari JWT token
+            Long userId = jwtUtils.getUserIdFromRequest(httpRequest);
+            if (userId == null) {
                 return ResponseUtils.fail("User not authenticated", HttpStatus.UNAUTHORIZED);
             }
 
-            Optional<TodoEntity> updatedTodo = todoService.update(username, id, request);
+            Optional<TodoEntity> updatedTodo = todoService.updateByUserId(userId, id, request);
             if (updatedTodo.isPresent()) {
                 return ResponseUtils.ok("Todo updated successfully", updatedTodo.get());
             } else {
@@ -96,12 +99,13 @@ public class TodoController {
     @PutMapping("toggle/{id}")
     public ResponseEntity<?> toggleTodo(@PathVariable Long id, HttpServletRequest httpRequest) {
         try {
-            String username = getUsernameFromToken(httpRequest);
-            if (username == null) {
+            // Ambil userId dari JWT token
+            Long userId = jwtUtils.getUserIdFromRequest(httpRequest);
+            if (userId == null) {
                 return ResponseUtils.fail("User not authenticated", HttpStatus.UNAUTHORIZED);
             }
 
-            Optional<TodoEntity> toggledTodo = todoService.toggle(username, id);
+            Optional<TodoEntity> toggledTodo = todoService.toggleByUserId(userId, id);
             if (toggledTodo.isPresent()) {
                 return ResponseUtils.ok("Todo status toggled successfully", toggledTodo.get());
             } else {

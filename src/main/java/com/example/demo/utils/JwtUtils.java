@@ -66,6 +66,31 @@ public class JwtUtils {
         return (String) getAllClaimsFromToken(token).get("role");
     }
 
+    // === Helper methods untuk extract dari HttpServletRequest ===
+    public String getUsernameFromRequest(HttpServletRequest request) {
+        String token = resolveToken(request);
+        if (token != null && validateToken(token)) {
+            return getUsername(token);
+        }
+        return null;
+    }
+
+    public Long getUserIdFromRequest(HttpServletRequest request) {
+        String token = resolveToken(request);
+        if (token != null && validateToken(token)) {
+            return getUserId(token);
+        }
+        return null;
+    }
+
+    public String getRoleFromRequest(HttpServletRequest request) {
+        String token = resolveToken(request);
+        if (token != null && validateToken(token)) {
+            return getRole(token);
+        }
+        return null;
+    }
+
     // === Validate ===
     public boolean validateToken(String token) {
         try {
