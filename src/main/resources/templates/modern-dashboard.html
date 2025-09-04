@@ -1,905 +1,1036 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TodoAI - Modern Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --primary-color: #6366f1;
-            --secondary-color: #8b5cf6;
-            --accent-color: #06b6d4;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --dark-bg: #0f172a;
-            --card-bg: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border-color: #334155;
-            --glass-bg: rgba(30, 41, 59, 0.8);
-            --glass-border: rgba(148, 163, 184, 0.1);
-        }
+      :root {
+        --primary-color: #6366f1;
+        --secondary-color: #8b5cf6;
+        --accent-color: #06b6d4;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --dark-bg: #0f172a;
+        --card-bg: #1e293b;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+        --glass-bg: rgba(30, 41, 59, 0.8);
+        --glass-border: rgba(148, 163, 184, 0.1);
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--dark-bg) 0%, #1e1b4b 100%);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, var(--dark-bg) 0%, #1e1b4b 100%);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
 
-        /* Modern Header */
-        .modern-header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+      /* Modern Header */
+      .modern-header {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--glass-border);
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
 
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      /* Modern Buttons */
+      .btn-modern {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        color: white;
+      }
+
+      .btn-modern::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .btn-modern:hover::before {
+        left: 100%;
+      }
+
+      .btn-ai {
+        background: linear-gradient(
+          135deg,
+          var(--accent-color),
+          var(--primary-color)
+        );
+        border-radius: 50px;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+      }
+
+      /* Main Container */
+      .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      /* Stats Cards */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+      }
+
+      .stat-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color),
+          var(--accent-color)
+        );
+      }
+
+      .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--text-primary),
+          var(--accent-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      /* Todo Section */
+      .todo-section {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(
+          135deg,
+          var(--text-primary),
+          var(--accent-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Todo Grid */
+      .todo-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .todo-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .todo-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        border-color: var(--primary-color);
+      }
+
+      .todo-content {
+        width: 100%;
+      }
+
+      .todo-card.completed {
+        opacity: 0.7;
+      }
+
+      .todo-card.completed .todo-title {
+        text-decoration: line-through;
+        color: var(--text-secondary);
+      }
+
+      .todo-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .todo-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .todo-description {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+      }
+
+      .todo-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+      }
+
+      .todo-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .todo-status.pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--warning-color);
+      }
+
+      .todo-status.completed {
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--success-color);
+      }
+
+      .todo-actions {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .todo-card:hover .todo-actions {
+        opacity: 1;
+      }
+
+      .action-btn {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        color: var(--text-secondary);
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        margin-left: 0.5rem;
+      }
+
+      .action-btn:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: scale(1.1);
+      }
+
+      /* Add Todo Card */
+      .add-todo-card {
+        background: var(--glass-bg);
+        border: 2px dashed var(--border-color);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+      }
+
+      .add-todo-card:hover {
+        border-color: var(--primary-color);
+        background: rgba(99, 102, 241, 0.1);
+        transform: translateY(-3px);
+      }
+
+      .add-icon {
+        font-size: 3rem;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+      }
+
+      .add-text {
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      /* Search and Filter */
+      .search-filter {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .search-input {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      .filter-select {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .filter-select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      /* Modal Styles */
+      .modal-content {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        color: var(--text-primary);
+      }
+
+      .modal-header {
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.5rem;
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      .modal-footer {
+        border-top: 1px solid var(--border-color);
+        padding: 1.5rem;
+      }
+
+      .form-control {
+        background: var(--glass-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+      }
+
+      .form-control:focus {
+        background: var(--glass-bg);
+        border-color: var(--primary-color);
+        color: var(--text-primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      /* Chatbot Modal */
+      .chatbot-modal .modal-dialog {
+        max-width: 600px;
+        margin: 1.75rem auto;
+      }
+
+      .chatbot-modal .modal-content {
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      }
+
+      .chatbot-header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: white;
+        border-radius: 20px 20px 0 0;
+        padding: 1.5rem;
+        border-bottom: none;
+      }
+
+      .chatbot-messages {
+        height: 400px;
+        overflow-y: auto;
+        padding: 1.5rem;
+        background: var(--glass-bg);
+        border-radius: 0;
+      }
+
+      .chatbot-input {
+        padding: 1.5rem;
+        background: var(--card-bg);
+        border-radius: 0 0 20px 20px;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .message {
+        margin-bottom: 1rem;
+        width: 100%;
+        display: flex;
+        clear: both;
+      }
+
+      .message.user {
+        justify-content: flex-end;
+        margin-left: auto;
+      }
+
+      .message.ai {
+        justify-content: flex-start;
+        margin-right: auto;
+      }
+
+      .message-bubble {
+        padding: 0.75rem 1rem;
+        border-radius: 18px;
+        display: inline-block;
+        word-wrap: break-word;
+        max-width: 70%;
+      }
+
+      .message.user .message-bubble {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: white;
+        border-bottom-right-radius: 4px;
+        float: right;
+      }
+
+      .message.ai .message-bubble {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        color: var(--text-primary);
+        border-bottom-left-radius: 4px;
+        float: left;
+      }
+
+      /* Typing Indicator */
+      .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+        border-bottom-left-radius: 4px;
+        width: 60px;
+        margin-bottom: 1rem;
+      }
+
+      .typing-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--text-secondary);
+        border-radius: 50%;
+        animation: typing 1.4s infinite ease-in-out;
+      }
+
+      .typing-dot:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+      .typing-dot:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+      .typing-dot:nth-child(3) {
+        animation-delay: 0s;
+      }
+
+      @keyframes typing {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.5;
+        }
+        40% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
         .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
+          padding: 0 1rem;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        /* Modern Buttons */
-        .btn-modern {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-modern:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-            color: white;
-        }
-
-        .btn-modern::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-modern:hover::before {
-            left: 100%;
-        }
-
-        .btn-ai {
-            background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
-            border-radius: 50px;
-            padding: 0.75rem 1.25rem;
-            font-size: 0.9rem;
-        }
-
-        /* Main Container */
         .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+          padding: 1rem;
         }
 
-        /* Stats Cards */
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+          grid-template-columns: 1fr;
         }
 
-        .stat-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
-        }
-
-        .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--text-primary), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Todo Section */
-        .todo-section {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--text-primary), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Todo Grid */
         .todo-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+          grid-template-columns: 1fr;
         }
+      }
 
-        .todo-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+      /* Notification */
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        color: var(--text-primary);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+      }
 
-        .todo-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            border-color: var(--primary-color);
-        }
+      .notification.show {
+        transform: translateX(0);
+      }
 
-        .todo-content {
-            width: 100%;
-        }
+      .notification.success {
+        border-left: 4px solid var(--success-color);
+      }
 
-        .todo-card.completed {
-            opacity: 0.7;
-        }
+      .notification.error {
+        border-left: 4px solid var(--danger-color);
+      }
 
-        .todo-card.completed .todo-title {
-            text-decoration: line-through;
-            color: var(--text-secondary);
-        }
-
-        .todo-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .todo-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .todo-description {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .todo-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .todo-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .todo-status.pending {
-            background: rgba(245, 158, 11, 0.2);
-            color: var(--warning-color);
-        }
-
-        .todo-status.completed {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--success-color);
-        }
-
-        .todo-actions {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .todo-card:hover .todo-actions {
-            opacity: 1;
-        }
-
-        .action-btn {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-secondary);
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            margin-left: 0.5rem;
-        }
-
-        .action-btn:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        /* Add Todo Card */
-        .add-todo-card {
-            background: var(--glass-bg);
-            border: 2px dashed var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 200px;
-        }
-
-        .add-todo-card:hover {
-            border-color: var(--primary-color);
-            background: rgba(99, 102, 241, 0.1);
-            transform: translateY(-3px);
-        }
-
-        .add-icon {
-            font-size: 3rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        .add-text {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        /* Search and Filter */
-        .search-filter {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .search-input {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .filter-select {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        /* Modal Styles */
-        .modal-content {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            color: var(--text-primary);
-        }
-
-        .modal-header {
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .modal-footer {
-            border-top: 1px solid var(--border-color);
-            padding: 1.5rem;
-        }
-
-        .form-control {
-            background: var(--glass-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-        }
-
-        .form-control:focus {
-            background: var(--glass-bg);
-            border-color: var(--primary-color);
-            color: var(--text-primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        /* Chatbot Modal */
-        .chatbot-modal .modal-dialog {
-            max-width: 600px;
-            margin: 1.75rem auto;
-        }
-
-        .chatbot-modal .modal-content {
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-        }
-
-        .chatbot-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: 20px 20px 0 0;
-            padding: 1.5rem;
-            border-bottom: none;
-        }
-
-        .chatbot-messages {
-            height: 400px;
-            overflow-y: auto;
-            padding: 1.5rem;
-            background: var(--glass-bg);
-            border-radius: 0;
-        }
-
-        .chatbot-input {
-            padding: 1.5rem;
-            background: var(--card-bg);
-            border-radius: 0 0 20px 20px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .message {
-            margin-bottom: 1rem;
-            width: 100%;
-            display: flex;
-            clear: both;
-        }
-
-        .message.user {
-            justify-content: flex-end;
-            margin-left: auto;
-        }
-
-        .message.ai {
-            justify-content: flex-start;
-            margin-right: auto;
-        }
-
-        .message-bubble {
-            padding: 0.75rem 1rem;
-            border-radius: 18px;
-            display: inline-block;
-            word-wrap: break-word;
-            max-width: 70%;
-        }
-
-        .message.user .message-bubble {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-bottom-right-radius: 4px;
-            float: right;
-        }
-
-        .message.ai .message-bubble {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-primary);
-            border-bottom-left-radius: 4px;
-            float: left;
-        }
-
-        /* Typing Indicator */
-        .typing-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            border-bottom-left-radius: 4px;
-            width: 60px;
-            margin-bottom: 1rem;
-        }
-
-        .typing-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--text-secondary);
-            border-radius: 50%;
-            animation: typing 1.4s infinite ease-in-out;
-        }
-
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        .typing-dot:nth-child(3) { animation-delay: 0s; }
-
-        @keyframes typing {
-            0%, 80%, 100% {
-                transform: scale(0.8);
-                opacity: 0.5;
-            }
-            40% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                padding: 0 1rem;
-            }
-            
-            .main-container {
-                padding: 1rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .todo-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            color: var(--text-primary);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success {
-            border-left: 4px solid var(--success-color);
-        }
-
-        .notification.error {
-            border-left: 4px solid var(--danger-color);
-        }
-
-        .notification.info {
-            border-left: 4px solid var(--accent-color);
-        }
+      .notification.info {
+        border-left: 4px solid var(--accent-color);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Modern Header -->
     <header class="modern-header">
-        <div class="header-content">
-            <div class="logo">
-                <i class="fas fa-robot"></i>
-                <span>TodoAI</span>
-            </div>
-            <div class="header-actions">
-                <button class="btn-modern btn-ai" onclick="openChatbot()">
-                    <i class="fas fa-comments me-2"></i>
-                    AI Assistant
-                </button>
-                <button class="btn-modern" onclick="logout()">
-                    <i class="fas fa-sign-out-alt me-2"></i>
-                    Logout
-                </button>
-            </div>
+      <div class="header-content">
+        <div class="logo">
+          <i class="fas fa-robot"></i>
+          <span>TodoAI</span>
         </div>
+        <div class="header-actions">
+          <button class="btn-modern btn-ai" onclick="openChatbot()">
+            <i class="fas fa-comments me-2"></i>
+            AI Assistant
+          </button>
+          <button class="btn-modern" onclick="logout()">
+            <i class="fas fa-sign-out-alt me-2"></i>
+            Logout
+          </button>
+        </div>
+      </div>
     </header>
 
     <!-- Main Container -->
     <div class="main-container">
-        <!-- Stats Section -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-tasks"></i>
-                </div>
-                <div class="stat-number" id="totalTodos">0</div>
-                <div class="stat-label">Total Todos</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="stat-number" id="pendingTodos">0</div>
-                <div class="stat-label">Pending</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-number" id="completedTodos">0</div>
-                <div class="stat-label">Completed</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="stat-number" id="completionRate">0%</div>
-                <div class="stat-label">Completion Rate</div>
-            </div>
+      <!-- Stats Section -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-tasks"></i>
+          </div>
+          <div class="stat-number" id="totalTodos">0</div>
+          <div class="stat-label">Total Todos</div>
         </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-number" id="pendingTodos">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-number" id="completedTodos">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="stat-number" id="completionRate">0%</div>
+          <div class="stat-label">Completion Rate</div>
+        </div>
+      </div>
 
-        <!-- Search and Filter -->
-        <div class="search-filter">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <input type="text" class="search-input" id="searchInput" placeholder="Search todos...">
-                </div>
-                <div class="col-md-3">
-                    <select class="filter-select" id="statusFilter">
-                        <option value="all">All Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="completed">Completed</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select class="filter-select" id="sortBy">
-                        <option value="newest">Newest First</option>
-                        <option value="oldest">Oldest First</option>
-                        <option value="title">Title A-Z</option>
-                        <option value="title-desc">Title Z-A</option>
-                    </select>
-                </div>
-            </div>
+      <!-- Search and Filter -->
+      <div class="search-filter">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input
+              type="text"
+              class="search-input"
+              id="searchInput"
+              placeholder="Search todos..."
+            />
+          </div>
+          <div class="col-md-3">
+            <select class="filter-select" id="statusFilter">
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <select class="filter-select" id="sortBy">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="title">Title A-Z</option>
+              <option value="title-desc">Title Z-A</option>
+            </select>
+          </div>
         </div>
+      </div>
 
-        <!-- Todo Section -->
-        <div class="todo-section">
-            <div class="section-header">
-                <h2 class="section-title">My Todos</h2>
-                <button class="btn-modern" onclick="openAddTodoModal()">
-                    <i class="fas fa-plus me-2"></i>
-                    Add Todo
-                </button>
-            </div>
-            <div class="todo-grid" id="todoGrid">
-                <!-- Todos will be loaded here -->
-            </div>
+      <!-- Todo Section -->
+      <div class="todo-section">
+        <div class="section-header">
+          <h2 class="section-title">My Todos</h2>
+          <button class="btn-modern" onclick="openAddTodoModal()">
+            <i class="fas fa-plus me-2"></i>
+            Add Todo
+          </button>
         </div>
+        <div class="todo-grid" id="todoGrid">
+          <!-- Todos will be loaded here -->
+        </div>
+      </div>
     </div>
 
     <!-- Add Todo Modal -->
     <div class="modal fade" id="addTodoModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Todo</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addTodoForm">
-                        <div class="mb-3">
-                            <label for="todoTitle" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="todoTitle" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="todoDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="todoDescription" rows="3"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn-modern" onclick="saveTodo()">Save Todo</button>
-                </div>
-            </div>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add New Todo</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="addTodoForm">
+              <div class="mb-3">
+                <label for="todoTitle" class="form-label">Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="todoTitle"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="todoDescription" class="form-label"
+                  >Description</label
+                >
+                <textarea
+                  class="form-control"
+                  id="todoDescription"
+                  rows="3"
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn-modern" onclick="saveTodo()">
+              Save Todo
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Edit Todo Modal -->
     <div class="modal fade" id="editTodoModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Todo</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Todo</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="editTodoForm">
+              <input type="hidden" id="editTodoId" />
+              <div class="mb-3">
+                <label for="editTodoTitle" class="form-label">Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editTodoTitle"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editTodoDescription" class="form-label"
+                  >Description</label
+                >
+                <textarea
+                  class="form-control"
+                  id="editTodoDescription"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="editTodoCompleted"
+                  />
+                  <label class="form-check-label" for="editTodoCompleted">
+                    Mark as completed
+                  </label>
                 </div>
-                <div class="modal-body">
-                    <form id="editTodoForm">
-                        <input type="hidden" id="editTodoId">
-                        <div class="mb-3">
-                            <label for="editTodoTitle" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="editTodoTitle" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editTodoDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="editTodoDescription" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="editTodoCompleted">
-                                <label class="form-check-label" for="editTodoCompleted">
-                                    Mark as completed
-                                </label>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn-modern" onclick="updateTodo()">Update Todo</button>
-                </div>
-            </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn-modern" onclick="updateTodo()">
+              Update Todo
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Chatbot Modal -->
     <div class="modal fade chatbot-modal" id="chatbotModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="chatbot-header">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div>
-                            <h5 class="mb-0">
-                                <i class="fas fa-robot me-2"></i>
-                                AI Assistant
-                            </h5>
-                            <small class="opacity-75">Ask me anything about your todos</small>
-                        </div>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                </div>
-                <div class="chatbot-messages" id="chatMessages">
-                    <div class="message ai">
-                        <div class="message-bubble">
-                            <i class="fas fa-robot me-2"></i>
-                            Hello! I'm your AI todo assistant. I can help you create, manage, and organize your todos. What would you like to do today?
-                        </div>
-                    </div>
-                </div>
-                <div class="chatbot-input">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="chatInput" placeholder="Type your message...">
-                        <button class="btn-modern" onclick="sendMessage()">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                </div>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="chatbot-header">
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <h5 class="mb-0">
+                  <i class="fas fa-robot me-2"></i>
+                  AI Assistant
+                </h5>
+                <small class="opacity-75"
+                  >Ask me anything about your todos</small
+                >
+              </div>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
             </div>
+          </div>
+          <div class="chatbot-messages" id="chatMessages">
+            <div class="message ai">
+              <div class="message-bubble">
+                <i class="fas fa-robot me-2"></i>
+                Hello! I'm your AI todo assistant. I can help you create,
+                manage, and organize your todos. What would you like to do
+                today?
+              </div>
+            </div>
+          </div>
+          <div class="chatbot-input">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                id="chatInput"
+                placeholder="Type your message..."
+              />
+              <button class="btn-modern" onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let todos = [];
-        let searchQuery = "";
-        let statusFilter = "all";
-        let sortBy = "newest";
+      let todos = [];
+      let searchQuery = "";
+      let statusFilter = "all";
+      let sortBy = "newest";
 
-        // Utility functions
-        function showNotification(message, type = "success") {
-            const notification = document.createElement("div");
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
+      // Utility functions
+      function showNotification(message, type = "success") {
+        const notification = document.createElement("div");
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
                 <div class="d-flex align-items-center">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                    <i class="fas fa-${
+                      type === "success"
+                        ? "check-circle"
+                        : type === "error"
+                        ? "exclamation-circle"
+                        : "info-circle"
+                    } me-2"></i>
                     ${message}
                 </div>
             `;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => notification.classList.add('show'), 100);
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => notification.remove(), 300);
-            }, 5000);
+        document.body.appendChild(notification);
+
+        setTimeout(() => notification.classList.add("show"), 100);
+        setTimeout(() => {
+          notification.classList.remove("show");
+          setTimeout(() => notification.remove(), 300);
+        }, 5000);
+      }
+
+      // Authentication
+      function checkAuth() {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          window.location.href = "/login";
+          return false;
         }
+        return token;
+      }
 
+      // API helper
+      async function apiRequest(url, options = {}) {
+        const token = localStorage.getItem("authToken");
+        const defaultOptions = {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        };
 
+        try {
+          const response = await fetch(url, { ...defaultOptions, ...options });
 
-        // Authentication
-        function checkAuth() {
-            const token = localStorage.getItem("authToken");
-            if (!token) {
-                window.location.href = "/login";
-                return false;
-            }
-            return token;
+          if (response.status === 401) {
+            localStorage.removeItem("authToken");
+            window.location.href = "/login";
+            return;
+          }
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          return response.json();
+        } catch (error) {
+          console.error("API request failed:", error);
+          throw error;
         }
+      }
 
-        // API helper
-        async function apiRequest(url, options = {}) {
-            const token = localStorage.getItem("authToken");
-            const defaultOptions = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            };
-
-            try {
-                const response = await fetch(url, { ...defaultOptions, ...options });
-                
-                if (response.status === 401) {
-                    localStorage.removeItem("authToken");
-                    window.location.href = "/login";
-                    return;
-                }
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                return response.json();
-            } catch (error) {
-                console.error("API request failed:", error);
-                throw error;
-            }
+      // Load todos
+      async function loadTodos() {
+        try {
+          const result = await apiRequest("/api/todo/my-todos");
+          if (result.success) {
+            todos = result.data;
+            updateStats();
+            renderTodos();
+          } else {
+            showNotification(
+              "Failed to load todos: " + result.message,
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Error loading todos:", error);
+          showNotification("Error loading todos. Please try again.", "error");
         }
+      }
 
-        // Load todos
-        async function loadTodos() {
-            try {
-                const result = await apiRequest("/api/todo/my-todos");
-                if (result.success) {
-                    todos = result.data;
-                    updateStats();
-                    renderTodos();
-                } else {
-                    showNotification("Failed to load todos: " + result.message, "error");
-                }
-            } catch (error) {
-                console.error("Error loading todos:", error);
-                showNotification("Error loading todos. Please try again.", "error");
-            }
-        }
+      // Update statistics
+      function updateStats() {
+        const total = todos.length;
+        const completed = todos.filter((todo) => todo.completed).length;
+        const pending = total - completed;
+        const completionRate =
+          total > 0 ? Math.round((completed / total) * 100) : 0;
 
-        // Update statistics
-        function updateStats() {
-            const total = todos.length;
-            const completed = todos.filter(todo => todo.completed).length;
-            const pending = total - completed;
-            const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+        document.getElementById("totalTodos").textContent = total;
+        document.getElementById("completedTodos").textContent = completed;
+        document.getElementById("pendingTodos").textContent = pending;
+        document.getElementById("completionRate").textContent =
+          completionRate + "%";
+      }
 
-            document.getElementById("totalTodos").textContent = total;
-            document.getElementById("completedTodos").textContent = completed;
-            document.getElementById("pendingTodos").textContent = pending;
-            document.getElementById("completionRate").textContent = completionRate + "%";
-        }
+      // Render todos
+      function renderTodos() {
+        const container = document.getElementById("todoGrid");
+        container.innerHTML = "";
 
-        // Render todos
-        function renderTodos() {
-            const container = document.getElementById("todoGrid");
-            container.innerHTML = "";
-
-            // Add todo card
-            container.innerHTML += `
+        // Add todo card
+        container.innerHTML += `
                 <div class="add-todo-card" onclick="openAddTodoModal()">
                     <div class="add-icon">
                         <i class="fas fa-plus"></i>
@@ -908,517 +1039,598 @@
                 </div>
             `;
 
-            // Filter and sort todos
-            let filteredTodos = filterAndSortTodos();
+        // Filter and sort todos
+        let filteredTodos = filterAndSortTodos();
 
-            if (filteredTodos.length === 0 && (searchQuery || statusFilter !== "all")) {
-                container.innerHTML += `
+        if (
+          filteredTodos.length === 0 &&
+          (searchQuery || statusFilter !== "all")
+        ) {
+          container.innerHTML += `
                     <div class="col-12 text-center py-5">
                         <i class="fas fa-search fa-3x text-muted mb-3"></i>
                         <h5 class="text-muted">No todos found</h5>
                         <p class="text-muted">Try adjusting your search or filter criteria</p>
                     </div>
                 `;
-            }
+        }
 
-            filteredTodos.forEach(todo => {
-                container.innerHTML += `
-                    <div class="todo-card ${todo.completed ? 'completed' : ''}">
+        filteredTodos.forEach((todo) => {
+          container.innerHTML += `
+                    <div class="todo-card ${todo.completed ? "completed" : ""}">
                         <div class="todo-content">
                             <div class="todo-header">
                                 <h6 class="todo-title">${todo.title}</h6>
                                 <div class="todo-actions">
-                                    <button class="action-btn" onclick="editTodo(${todo.id})" title="Edit">
+                                    <button class="action-btn" onclick="editTodo(${
+                                      todo.id
+                                    })" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="action-btn" onclick="toggleTodo(${todo.id})" title="${todo.completed ? 'Mark Pending' : 'Mark Complete'}">
-                                        <i class="fas fa-${todo.completed ? 'undo' : 'check'}"></i>
+                                    <button class="action-btn" onclick="toggleTodo(${
+                                      todo.id
+                                    })" title="${
+            todo.completed ? "Mark Pending" : "Mark Complete"
+          }">
+                                        <i class="fas fa-${
+                                          todo.completed ? "undo" : "check"
+                                        }"></i>
                                     </button>
-                                    <button class="action-btn" onclick="deleteTodo(${todo.id})" title="Delete">
+                                    <button class="action-btn" onclick="deleteTodo(${
+                                      todo.id
+                                    })" title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="todo-description">${todo.description || "No description"}</div>
+                            <div class="todo-description">${
+                              todo.description || "No description"
+                            }</div>
                             <div class="todo-meta">
                                 <span>
                                     <i class="fas fa-calendar me-1"></i>
-                                    ${new Date(todo.createdAt).toLocaleDateString()}
+                                    ${new Date(
+                                      todo.createdAt
+                                    ).toLocaleDateString()}
                                 </span>
-                                <span class="todo-status ${todo.completed ? 'completed' : 'pending'}">
-                                    ${todo.completed ? 'Completed' : 'Pending'}
+                                <span class="todo-status ${
+                                  todo.completed ? "completed" : "pending"
+                                }">
+                                    ${todo.completed ? "Completed" : "Pending"}
                                 </span>
                             </div>
                         </div>
                     </div>
                 `;
-            });
+        });
+      }
+
+      // Filter and sort todos
+      function filterAndSortTodos() {
+        let filteredTodos = [...todos];
+
+        // Filter by status
+        if (statusFilter === "pending") {
+          filteredTodos = filteredTodos.filter((todo) => !todo.completed);
+        } else if (statusFilter === "completed") {
+          filteredTodos = filteredTodos.filter((todo) => todo.completed);
         }
 
-        // Filter and sort todos
-        function filterAndSortTodos() {
-            let filteredTodos = [...todos];
-
-            // Filter by status
-            if (statusFilter === "pending") {
-                filteredTodos = filteredTodos.filter(todo => !todo.completed);
-            } else if (statusFilter === "completed") {
-                filteredTodos = filteredTodos.filter(todo => todo.completed);
-            }
-
-            // Filter by search query
-            if (searchQuery) {
-                filteredTodos = filteredTodos.filter(todo =>
-                    todo.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    (todo.description && todo.description.toLowerCase().includes(searchQuery.toLowerCase()))
-                );
-            }
-
-            // Sort todos
-            filteredTodos.sort((a, b) => {
-                switch (sortBy) {
-                    case "oldest":
-                        return new Date(a.createdAt) - new Date(b.createdAt);
-                    case "title":
-                        return a.title.localeCompare(b.title);
-                    case "title-desc":
-                        return b.title.localeCompare(a.title);
-                    case "newest":
-                    default:
-                        return new Date(b.createdAt) - new Date(a.createdAt);
-                }
-            });
-
-            return filteredTodos;
+        // Filter by search query
+        if (searchQuery) {
+          filteredTodos = filteredTodos.filter(
+            (todo) =>
+              todo.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              (todo.description &&
+                todo.description
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase()))
+          );
         }
 
-        // Todo operations
-        async function saveTodo() {
-            const title = document.getElementById("todoTitle").value.trim();
-            const description = document.getElementById("todoDescription").value.trim();
+        // Sort todos
+        filteredTodos.sort((a, b) => {
+          switch (sortBy) {
+            case "oldest":
+              return new Date(a.createdAt) - new Date(b.createdAt);
+            case "title":
+              return a.title.localeCompare(b.title);
+            case "title-desc":
+              return b.title.localeCompare(a.title);
+            case "newest":
+            default:
+              return new Date(b.createdAt) - new Date(a.createdAt);
+          }
+        });
 
-            if (!title) {
-                showNotification("Title is required", "error");
-                return;
-            }
+        return filteredTodos;
+      }
 
-            try {
-                const result = await apiRequest("/api/todo/add", {
-                    method: "POST",
-                    body: JSON.stringify({ title, description }),
-                });
+      // Todo operations
+      async function saveTodo() {
+        const title = document.getElementById("todoTitle").value.trim();
+        const description = document
+          .getElementById("todoDescription")
+          .value.trim();
 
-                if (result.success) {
-                    bootstrap.Modal.getInstance(document.getElementById("addTodoModal")).hide();
-                    document.getElementById("addTodoForm").reset();
-                    loadTodos();
-                    showNotification("Todo created successfully!");
-                } else {
-                    showNotification("Failed to create todo: " + result.message, "error");
-                }
-            } catch (error) {
-                console.error("Error saving todo:", error);
-                showNotification("Error creating todo. Please try again.", "error");
-            }
+        if (!title) {
+          showNotification("Title is required", "error");
+          return;
         }
 
-        function editTodo(id) {
-            const todo = todos.find(t => t.id === id);
-            if (!todo) return;
+        try {
+          const result = await apiRequest("/api/todo/add", {
+            method: "POST",
+            body: JSON.stringify({ title, description }),
+          });
 
-            document.getElementById("editTodoId").value = todo.id;
-            document.getElementById("editTodoTitle").value = todo.title;
-            document.getElementById("editTodoDescription").value = todo.description || "";
-            document.getElementById("editTodoCompleted").checked = todo.completed;
+          if (result.success) {
+            bootstrap.Modal.getInstance(
+              document.getElementById("addTodoModal")
+            ).hide();
+            document.getElementById("addTodoForm").reset();
+            loadTodos();
+            showNotification("Todo created successfully!");
+          } else {
+            showNotification(
+              "Failed to create todo: " + result.message,
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Error saving todo:", error);
+          showNotification("Error creating todo. Please try again.", "error");
+        }
+      }
 
-            new bootstrap.Modal(document.getElementById("editTodoModal")).show();
+      function editTodo(id) {
+        const todo = todos.find((t) => t.id === id);
+        if (!todo) return;
+
+        document.getElementById("editTodoId").value = todo.id;
+        document.getElementById("editTodoTitle").value = todo.title;
+        document.getElementById("editTodoDescription").value =
+          todo.description || "";
+        document.getElementById("editTodoCompleted").checked = todo.completed;
+
+        new bootstrap.Modal(document.getElementById("editTodoModal")).show();
+      }
+
+      async function updateTodo() {
+        const id = document.getElementById("editTodoId").value;
+        const title = document.getElementById("editTodoTitle").value.trim();
+        const description = document
+          .getElementById("editTodoDescription")
+          .value.trim();
+        const completed = document.getElementById("editTodoCompleted").checked;
+
+        if (!title) {
+          showNotification("Title is required", "error");
+          return;
         }
 
-        async function updateTodo() {
-            const id = document.getElementById("editTodoId").value;
-            const title = document.getElementById("editTodoTitle").value.trim();
-            const description = document.getElementById("editTodoDescription").value.trim();
-            const completed = document.getElementById("editTodoCompleted").checked;
+        try {
+          const result = await apiRequest(`/api/todo/update/${id}`, {
+            method: "PUT",
+            body: JSON.stringify({ title, description, completed }),
+          });
 
-            if (!title) {
-                showNotification("Title is required", "error");
-                return;
-            }
-
-            try {
-                const result = await apiRequest(`/api/todo/update/${id}`, {
-                    method: "PUT",
-                    body: JSON.stringify({ title, description, completed }),
-                });
-
-                if (result.success) {
-                    bootstrap.Modal.getInstance(document.getElementById("editTodoModal")).hide();
-                    loadTodos();
-                    showNotification("Todo updated successfully!");
-                } else {
-                    showNotification("Failed to update todo: " + result.message, "error");
-                }
-            } catch (error) {
-                console.error("Error updating todo:", error);
-                showNotification("Error updating todo. Please try again.", "error");
-            }
+          if (result.success) {
+            bootstrap.Modal.getInstance(
+              document.getElementById("editTodoModal")
+            ).hide();
+            loadTodos();
+            showNotification("Todo updated successfully!");
+          } else {
+            showNotification(
+              "Failed to update todo: " + result.message,
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Error updating todo:", error);
+          showNotification("Error updating todo. Please try again.", "error");
         }
+      }
 
-        async function toggleTodo(id) {
-            try {
-                const result = await apiRequest(`/api/todo/toggle/${id}`, {
-                    method: "PUT",
-                });
+      async function toggleTodo(id) {
+        try {
+          const result = await apiRequest(`/api/todo/toggle/${id}`, {
+            method: "PUT",
+          });
 
-                if (result.success) {
-                    loadTodos();
-                    showNotification("Todo status updated!");
-                } else {
-                    showNotification("Failed to toggle todo: " + result.message, "error");
-                }
-            } catch (error) {
-                console.error("Error toggling todo:", error);
-                showNotification("Error updating todo status. Please try again.", "error");
-            }
+          if (result.success) {
+            loadTodos();
+            showNotification("Todo status updated!");
+          } else {
+            showNotification(
+              "Failed to toggle todo: " + result.message,
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Error toggling todo:", error);
+          showNotification(
+            "Error updating todo status. Please try again.",
+            "error"
+          );
         }
+      }
 
-        async function deleteTodo(id) {
-            if (!confirm("Are you sure you want to delete this todo?")) return;
+      async function deleteTodo(id) {
+        if (!confirm("Are you sure you want to delete this todo?")) return;
 
-            try {
-                const result = await apiRequest(`/api/todo/delete/${id}`, {
-                    method: "DELETE",
-                });
+        try {
+          const result = await apiRequest(`/api/todo/delete/${id}`, {
+            method: "DELETE",
+          });
 
-                if (result.success) {
-                    loadTodos();
-                    showNotification("Todo deleted successfully!");
-                } else {
-                    showNotification("Failed to delete todo: " + result.message, "error");
-                }
-            } catch (error) {
-                console.error("Error deleting todo:", error);
-                showNotification("Error deleting todo. Please try again.", "error");
-            }
+          if (result.success) {
+            loadTodos();
+            showNotification("Todo deleted successfully!");
+          } else {
+            showNotification(
+              "Failed to delete todo: " + result.message,
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error("Error deleting todo:", error);
+          showNotification("Error deleting todo. Please try again.", "error");
         }
+      }
 
-        // Modal functions
-        function openAddTodoModal() {
-            new bootstrap.Modal(document.getElementById("addTodoModal")).show();
-        }
+      // Modal functions
+      function openAddTodoModal() {
+        new bootstrap.Modal(document.getElementById("addTodoModal")).show();
+      }
 
-        function openChatbot() {
-            // Clear any existing typing indicators when opening chatbot
-            hideTypingIndicator();
-            new bootstrap.Modal(document.getElementById("chatbotModal")).show();
-        }
+      function openChatbot() {
+        // Clear any existing typing indicators when opening chatbot
+        hideTypingIndicator();
+        new bootstrap.Modal(document.getElementById("chatbotModal")).show();
+      }
 
-        // Chatbot functions
-        function addMessage(type, content) {
-            // Always clear typing indicator before appending a new message
-            hideTypingIndicator();
-            const messagesContainer = document.getElementById("chatMessages");
-            const messageDiv = document.createElement("div");
-            messageDiv.className = `message ${type}`;
+      // Chatbot functions
+      function addMessage(type, content) {
+        // Always clear typing indicator before appending a new message
+        hideTypingIndicator();
+        const messagesContainer = document.getElementById("chatMessages");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${type}`;
 
-            const bubbleDiv = document.createElement("div");
-            bubbleDiv.className = "message-bubble";
-            bubbleDiv.innerHTML = content.replace(/\n/g, "<br>");
+        const bubbleDiv = document.createElement("div");
+        bubbleDiv.className = "message-bubble";
+        bubbleDiv.innerHTML = content.replace(/\n/g, "<br>");
 
-            messageDiv.appendChild(bubbleDiv);
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
-            // Debug: log the message type
-            console.log(`Added ${type} message:`, content);
-        }
+        messageDiv.appendChild(bubbleDiv);
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-        function showTypingIndicator() {
-            const messagesContainer = document.getElementById("chatMessages");
-            
-            // Remove existing typing indicator if any
-            hideTypingIndicator();
-            
-            const typingDiv = document.createElement("div");
-            typingDiv.className = "message ai";
-            typingDiv.id = "typingIndicator";
-            
-            typingDiv.innerHTML = `
+        // Debug: log the message type
+        console.log(`Added ${type} message:`, content);
+      }
+
+      function showTypingIndicator() {
+        const messagesContainer = document.getElementById("chatMessages");
+
+        // Remove existing typing indicator if any
+        hideTypingIndicator();
+
+        const typingDiv = document.createElement("div");
+        typingDiv.className = "message ai";
+        typingDiv.id = "typingIndicator";
+
+        typingDiv.innerHTML = `
                 <div class="typing-indicator">
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
                 </div>
             `;
-            
-            messagesContainer.appendChild(typingDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            
-            console.log("Typing indicator shown");
+
+        messagesContainer.appendChild(typingDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        console.log("Typing indicator shown");
+      }
+
+      function hideTypingIndicator() {
+        const typingIndicator = document.getElementById("typingIndicator");
+        if (typingIndicator) {
+          typingIndicator.remove();
+          console.log("Typing indicator hidden");
         }
 
-        function hideTypingIndicator() {
-            const typingIndicator = document.getElementById("typingIndicator");
-            if (typingIndicator) {
-                typingIndicator.remove();
-                console.log("Typing indicator hidden");
-            }
-            
-            // Double check - remove any remaining typing indicators
-            const allTypingIndicators = document.querySelectorAll('.typing-indicator');
-            allTypingIndicators.forEach(indicator => {
-                if (indicator.closest('#typingIndicator')) {
-                    indicator.closest('#typingIndicator').remove();
-                }
-            });
-        }
+        // Double check - remove any remaining typing indicators
+        const allTypingIndicators =
+          document.querySelectorAll(".typing-indicator");
+        allTypingIndicators.forEach((indicator) => {
+          if (indicator.closest("#typingIndicator")) {
+            indicator.closest("#typingIndicator").remove();
+          }
+        });
+      }
 
-        async function sendMessage() {
-            const input = document.getElementById("chatInput");
-            const sendButton = document.querySelector('#chatbotModal .btn-modern');
-            const message = input.value.trim();
+      async function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const sendButton = document.querySelector("#chatbotModal .btn-modern");
+        const message = input.value.trim();
 
-            if (!message) return;
+        if (!message) return;
 
-            // Disable input and button temporarily
-            input.disabled = true;
-            sendButton.disabled = true;
+        // Disable input and button temporarily
+        input.disabled = true;
+        sendButton.disabled = true;
 
-            addMessage("user", message);
-            input.value = "";
+        addMessage("user", message);
+        input.value = "";
 
-            // Show typing indicator immediately
-            showTypingIndicator();
+        // Show typing indicator immediately
+        showTypingIndicator();
 
-            try {
-                const response = await apiRequest("/api/agent/chat", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        message: message,
-                        language: "id",
-                        auto_execute: true,
-                    }),
-                });
+        try {
+          const response = await apiRequest("/api/agent/chat", {
+            method: "POST",
+            body: JSON.stringify({
+              message: message,
+              language: "id",
+              auto_execute: true,
+            }),
+          });
+          if (response.success) {
+            const aiMessage =
+              response.data.message ||
+              response.data.response ||
+              "Maaf, saya tidak memahami permintaan Anda.";
 
-                if (response.success) {
-                    const aiMessage = response.data.message || response.data.response || "Maaf, saya tidak memahami permintaan Anda.";
-                    
-                    // Hide typing indicator before adding AI message
-                    hideTypingIndicator();
-                    addMessage("ai", aiMessage);
+            hideTypingIndicator();
+            addMessage("ai", aiMessage);
 
-                    // Handle actionable commands (no auto-execution on frontend)
-                    if (response.data.actions && response.data.actions.actionable) {
-                        handleAgentAction(response.data.actions);
-                    }
-
-                    // Refresh todos if needed
-                    if (response.data.refresh_todos) {
-                        loadTodos();
-                    }
-                } else {
-                    hideTypingIndicator();
-                    addMessage("ai", "Maaf, saya mengalami kesalahan. Silakan coba lagi.");
-                }
-            } catch (error) {
-                // Hide typing indicator on error
-                hideTypingIndicator();
-                addMessage("ai", "Maaf, saya mengalami masalah koneksi. Silakan coba lagi nanti.");
-                console.error("Chatbot error:", error);
-            } finally {
-                // Re-enable input and button
-                input.disabled = false;
-                sendButton.disabled = false;
-                input.focus();
-            }
-        }
-
-        // Note: auto execution is handled by backend; frontend will not call execute endpoint
-
-        function handleAgentAction(actions) {
-            if (actions.suggested_action) {
-                const actionDiv = document.createElement("div");
-                actionDiv.className = "mt-2";
-
-                let buttons = "";
-                const params = actions.parameters || {};
-                const titleParam = params.title || params.name || params.todo_title || "";
-
-                switch (actions.suggested_action) {
-                    case "create_todo":
-                        buttons = `<button class="btn-modern btn-sm" onclick="openAddTodoModal()">Buat Todo</button>`;
-                        break;
-                    case "list_todos":
-                        buttons = `<button class="btn-modern btn-sm" onclick="displayTodosInChat()">Lihat Todo</button>`;
-                        break;
-                    case "get_statistics":
-                        buttons = `<button class="btn-modern btn-sm" onclick="displayStatsInChat()">Lihat Statistik</button>`;
-                        break;
-                    case "complete_todo":
-                        if (titleParam) {
-                            buttons = `<button class=\"btn-modern btn-sm\" onclick=\"completeTodoByTitle('${titleParam.replace(/'/g, "\\'")}')\">Tandai Selesai: ${titleParam}</button>`;
-                        }
-                        break;
-                    case "uncomplete_todo":
-                        if (titleParam) {
-                            buttons = `<button class=\"btn-modern btn-sm\" onclick=\"uncompleteTodoByTitle('${titleParam.replace(/'/g, "\\'")}')\">Batalkan Selesai: ${titleParam}</button>`;
-                        }
-                        break;
-                    case "delete_todo":
-                        if (titleParam) {
-                            buttons = `<button class=\"btn-modern btn-sm\" onclick=\"deleteTodoByTitle('${titleParam.replace(/'/g, "\\'")}')\">Hapus: ${titleParam}</button>`;
-                        }
-                        break;
-                }
-
-                if (buttons) {
-                    actionDiv.innerHTML = `<small class="text-muted">Aksi cepat:</small><br>${buttons}`;
-                    const lastMessage = document.querySelector("#chatMessages .message:last-child .message-bubble");
-                    if (lastMessage) {
-                        lastMessage.appendChild(actionDiv);
-                    }
-                }
-            }
-        }
-
-        function findTodoIdByTitle(title) {
-            const target = (title || "").toLowerCase().trim();
-            if (!target) return null;
-            const match = todos.find(t => (t.title || "").toLowerCase().trim() === target);
-            return match ? match.id : null;
-        }
-
-        async function completeTodoByTitle(title) {
-            const id = findTodoIdByTitle(title);
-            if (!id) {
-                addMessage("ai", `❌ Tidak menemukan todo dengan judul: ${title}`);
-                return;
-            }
-            try {
-                await apiRequest(`/api/todo/complete/${id}`, { method: "PUT" });
-                loadTodos();
-                addMessage("ai", `✅ '${title}' ditandai selesai.`);
-            } catch (e) {
-                addMessage("ai", "❌ Gagal menandai selesai.");
-            }
-        }
-
-        async function uncompleteTodoByTitle(title) {
-            const id = findTodoIdByTitle(title);
-            if (!id) {
-                addMessage("ai", `❌ Tidak menemukan todo dengan judul: ${title}`);
-                return;
-            }
-            try {
-                await apiRequest(`/api/todo/uncomplete/${id}`, { method: "PUT" });
-                loadTodos();
-                addMessage("ai", `↩️ '${title}' dikembalikan ke pending.`);
-            } catch (e) {
-                addMessage("ai", "❌ Gagal mengubah status.");
-            }
-        }
-
-        async function deleteTodoByTitle(title) {
-            const id = findTodoIdByTitle(title);
-            if (!id) {
-                addMessage("ai", `❌ Tidak menemukan todo dengan judul: ${title}`);
-                return;
-            }
-            try {
-                await apiRequest(`/api/todo/delete/${id}`, { method: "DELETE" });
-                loadTodos();
-                addMessage("ai", `🗑️ '${title}' telah dihapus.`);
-            } catch (e) {
-                addMessage("ai", "❌ Gagal menghapus todo.");
-            }
-        }
-
-        function displayTodosInChat() {
-            if (todos.length === 0) {
-                addMessage("ai", "📝 Anda belum memiliki todo apapun. Katakan 'Buat todo: [judul]' untuk membuat yang pertama!");
-                return;
-            }
-
-            let todoList = "📝 **Daftar Todo Anda:**\n\n";
-            todos.forEach((todo, index) => {
-                const status = todo.completed ? "✅" : "⏳";
-                todoList += `${index + 1}. ${status} **${todo.title}**\n`;
-                if (todo.description) {
-                    todoList += `   📋 ${todo.description}\n`;
-                }
-                todoList += "\n";
-            });
-
-            const completedCount = todos.filter(t => t.completed).length;
-            const pendingCount = todos.length - completedCount;
-            todoList += `\n📊 **Ringkasan:** ${todos.length} total, ${completedCount} selesai, ${pendingCount} pending`;
-
-            addMessage("ai", todoList);
-        }
-
-        function displayStatsInChat() {
-            if (todos.length === 0) {
-                addMessage("ai", "📊 Anda belum memiliki todo apapun untuk ditampilkan statistiknya.");
-                return;
-            }
-
-            const total = todos.length;
-            const completed = todos.filter(t => t.completed).length;
-            const pending = total - completed;
-            const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-            let statsMessage = "📊 **Statistik Todo Anda:**\n\n";
-            statsMessage += `📝 **Total Todo:** ${total}\n`;
-            statsMessage += `✅ **Selesai:** ${completed}\n`;
-            statsMessage += `⏳ **Pending:** ${pending}\n`;
-            statsMessage += `📈 **Tingkat Penyelesaian:** ${completionRate}%\n\n`;
-
-            if (completionRate >= 80) {
-                statsMessage += "🎉 Luar biasa! Anda sangat produktif!";
-            } else if (completionRate >= 50) {
-                statsMessage += "👍 Bagus! Terus tingkatkan produktivitas Anda!";
-            } else if (total > 0) {
-                statsMessage += "💪 Semangat! Mari selesaikan lebih banyak todo!";
-            }
-
-            addMessage("ai", statsMessage);
-        }
-
-        function logout() {
-            localStorage.removeItem("authToken");
-            window.location.href = "/login";
-        }
-
-        // Event listeners
-        document.addEventListener("DOMContentLoaded", function() {
-            if (!checkAuth()) return;
-
+            // 🚀 Tambahan ini
             loadTodos();
 
-            // Search and filter
-            document.getElementById("searchInput").addEventListener("input", function() {
-                searchQuery = this.value;
-                renderTodos();
-            });
+            if (response.data.actions && response.data.actions.actionable) {
+              handleAgentAction(response.data.actions);
+            }
+          } else {
+            hideTypingIndicator();
+            addMessage(
+              "ai",
+              "Maaf, saya mengalami kesalahan. Silakan coba lagi."
+            );
+          }
+        } catch (error) {
+          // Hide typing indicator on error
+          hideTypingIndicator();
+          addMessage(
+            "ai",
+            "Maaf, saya mengalami masalah koneksi. Silakan coba lagi nanti."
+          );
+          console.error("Chatbot error:", error);
+        } finally {
+          // Re-enable input and button
+          input.disabled = false;
+          sendButton.disabled = false;
+          input.focus();
+        }
+      }
 
-            document.getElementById("statusFilter").addEventListener("change", function() {
-                statusFilter = this.value;
-                renderTodos();
-            });
+      // Note: auto execution is handled by backend; frontend will not call execute endpoint
 
-            document.getElementById("sortBy").addEventListener("change", function() {
-                sortBy = this.value;
-                renderTodos();
-            });
+      function handleAgentAction(actions) {
+        if (actions.suggested_action) {
+          const actionDiv = document.createElement("div");
+          actionDiv.className = "mt-2";
 
-            // Chat input
-            document.getElementById("chatInput").addEventListener("keypress", function(e) {
-                if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
+          let buttons = "";
+          const params = actions.parameters || {};
+          const titleParam =
+            params.title || params.name || params.todo_title || "";
+
+          switch (actions.suggested_action) {
+            case "create_todo":
+              buttons = `<button class="btn-modern btn-sm" onclick="openAddTodoModal()">Buat Todo</button>`;
+              break;
+            case "list_todos":
+              buttons = `<button class="btn-modern btn-sm" onclick="displayTodosInChat()">Lihat Todo</button>`;
+              break;
+            case "get_statistics":
+              buttons = `<button class="btn-modern btn-sm" onclick="displayStatsInChat()">Lihat Statistik</button>`;
+              break;
+            case "complete_todo":
+              if (titleParam) {
+                buttons = `<button class=\"btn-modern btn-sm\" onclick=\"completeTodoByTitle('${titleParam.replace(
+                  /'/g,
+                  "\\'"
+                )}')\">Tandai Selesai: ${titleParam}</button>`;
+              }
+              break;
+            case "uncomplete_todo":
+              if (titleParam) {
+                buttons = `<button class=\"btn-modern btn-sm\" onclick=\"uncompleteTodoByTitle('${titleParam.replace(
+                  /'/g,
+                  "\\'"
+                )}')\">Batalkan Selesai: ${titleParam}</button>`;
+              }
+              break;
+            case "delete_todo":
+              if (titleParam) {
+                buttons = `<button class=\"btn-modern btn-sm\" onclick=\"deleteTodoByTitle('${titleParam.replace(
+                  /'/g,
+                  "\\'"
+                )}')\">Hapus: ${titleParam}</button>`;
+              }
+              break;
+          }
+
+          if (buttons) {
+            actionDiv.innerHTML = `<small class="text-muted">Aksi cepat:</small><br>${buttons}`;
+            const lastMessage = document.querySelector(
+              "#chatMessages .message:last-child .message-bubble"
+            );
+            if (lastMessage) {
+              lastMessage.appendChild(actionDiv);
+            }
+          }
+        }
+      }
+
+      function findTodoIdByTitle(title) {
+        const target = (title || "").toLowerCase().trim();
+        if (!target) return null;
+        const match = todos.find(
+          (t) => (t.title || "").toLowerCase().trim() === target
+        );
+        return match ? match.id : null;
+      }
+
+      async function completeTodoByTitle(title) {
+        const id = findTodoIdByTitle(title);
+        if (!id) {
+          addMessage("ai", `❌ Tidak menemukan todo dengan judul: ${title}`);
+          return;
+        }
+        try {
+          await apiRequest(`/api/todo/complete/${id}`, { method: "PUT" });
+          loadTodos();
+          addMessage("ai", `✅ '${title}' ditandai selesai.`);
+        } catch (e) {
+          addMessage("ai", "❌ Gagal menandai selesai.");
+        }
+      }
+
+      async function uncompleteTodoByTitle(title) {
+        const id = findTodoIdByTitle(title);
+        if (!id) {
+          addMessage("ai", `❌ Tidak menemukan todo dengan judul: ${title}`);
+          return;
+        }
+        try {
+          await apiRequest(`/api/todo/uncomplete/${id}`, { method: "PUT" });
+          loadTodos();
+          addMessage("ai", `↩️ '${title}' dikembalikan ke pending.`);
+        } catch (e) {
+          addMessage("ai", "❌ Gagal mengubah status.");
+        }
+      }
+
+      async function deleteTodoByTitle(title) {
+        const id = findTodoIdByTitle(title);
+        if (!id) {
+          addMessage("ai", `❌ Tidak menemukan todo dengan judul: ${title}`);
+          return;
+        }
+        try {
+          await apiRequest(`/api/todo/delete/${id}`, { method: "DELETE" });
+          loadTodos();
+          addMessage("ai", `🗑️ '${title}' telah dihapus.`);
+        } catch (e) {
+          addMessage("ai", "❌ Gagal menghapus todo.");
+        }
+      }
+
+      function displayTodosInChat() {
+        if (todos.length === 0) {
+          addMessage(
+            "ai",
+            "📝 Anda belum memiliki todo apapun. Katakan 'Buat todo: [judul]' untuk membuat yang pertama!"
+          );
+          return;
+        }
+
+        let todoList = "📝 **Daftar Todo Anda:**\n\n";
+        todos.forEach((todo, index) => {
+          const status = todo.completed ? "✅" : "⏳";
+          todoList += `${index + 1}. ${status} **${todo.title}**\n`;
+          if (todo.description) {
+            todoList += `   📋 ${todo.description}\n`;
+          }
+          todoList += "\n";
         });
+
+        const completedCount = todos.filter((t) => t.completed).length;
+        const pendingCount = todos.length - completedCount;
+        todoList += `\n📊 **Ringkasan:** ${todos.length} total, ${completedCount} selesai, ${pendingCount} pending`;
+
+        addMessage("ai", todoList);
+      }
+
+      function displayStatsInChat() {
+        if (todos.length === 0) {
+          addMessage(
+            "ai",
+            "📊 Anda belum memiliki todo apapun untuk ditampilkan statistiknya."
+          );
+          return;
+        }
+
+        const total = todos.length;
+        const completed = todos.filter((t) => t.completed).length;
+        const pending = total - completed;
+        const completionRate =
+          total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        let statsMessage = "📊 **Statistik Todo Anda:**\n\n";
+        statsMessage += `📝 **Total Todo:** ${total}\n`;
+        statsMessage += `✅ **Selesai:** ${completed}\n`;
+        statsMessage += `⏳ **Pending:** ${pending}\n`;
+        statsMessage += `📈 **Tingkat Penyelesaian:** ${completionRate}%\n\n`;
+
+        if (completionRate >= 80) {
+          statsMessage += "🎉 Luar biasa! Anda sangat produktif!";
+        } else if (completionRate >= 50) {
+          statsMessage += "👍 Bagus! Terus tingkatkan produktivitas Anda!";
+        } else if (total > 0) {
+          statsMessage += "💪 Semangat! Mari selesaikan lebih banyak todo!";
+        }
+
+        addMessage("ai", statsMessage);
+      }
+
+      function logout() {
+        localStorage.removeItem("authToken");
+        window.location.href = "/login";
+      }
+
+      // Event listeners
+      document.addEventListener("DOMContentLoaded", function () {
+        if (!checkAuth()) return;
+
+        loadTodos();
+
+        // Search and filter
+        document
+          .getElementById("searchInput")
+          .addEventListener("input", function () {
+            searchQuery = this.value;
+            renderTodos();
+          });
+
+        document
+          .getElementById("statusFilter")
+          .addEventListener("change", function () {
+            statusFilter = this.value;
+            renderTodos();
+          });
+
+        document
+          .getElementById("sortBy")
+          .addEventListener("change", function () {
+            sortBy = this.value;
+            renderTodos();
+          });
+
+        // Chat input
+        document
+          .getElementById("chatInput")
+          .addEventListener("keypress", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          });
+      });
     </script>
-</body>
+  </body>
 </html>

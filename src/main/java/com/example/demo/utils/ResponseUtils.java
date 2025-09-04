@@ -3,7 +3,7 @@ package com.example.demo.utils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.example.dto.response.GeneralResponse;
+import com.example.demo.dto.response.GeneralResponse;
 
 import lombok.Data;
 

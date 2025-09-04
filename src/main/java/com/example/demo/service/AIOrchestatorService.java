@@ -8,9 +8,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.request.CreateTodoRequest;
+import com.example.demo.dto.request.UpdateTodoRequest;
 import com.example.demo.model.TodoEntity;
-import com.example.dto.request.CreateTodoRequest;
-import com.example.dto.request.UpdateTodoRequest;
 
 @Service
 public class AIOrchestatorService {
@@ -41,41 +41,41 @@ public class AIOrchestatorService {
         try {
             // Create prompt for AI to analyze user intent and extract parameters
             String analysisPrompt = String.format(
-                "Analisis pesan user berikut dan tentukan aksi yang diinginkan beserta parameternya:\n\n" +
-                "Pesan: \"%s\"\n\n" +
-                "Tugas:\n" +
-                "1. Identifikasi jenis aksi yang diinginkan user\n" +
-                "2. Ekstrak parameter yang diperlukan untuk aksi tersebut\n" +
-                "3. Tentukan apakah ini actionable (dapat langsung dieksekusi)\n\n" +
-                "Jenis aksi yang tersedia:\n" +
-                "- create_todo: membuat todo baru (perlu: title, description opsional)\n" +
-                "- list_todos: menampilkan semua todo\n" +
-                "- update_todo: mengubah todo (perlu: id/title lama, title/description/completed baru)\n" +
-                "- complete_todo: menandai todo selesai (perlu: id/title)\n" +
-                "- delete_todo: menghapus todo (perlu: id/title)\n" +
-                "- get_statistics: menampilkan statistik todo\n" +
-                "- none: tidak ada aksi spesifik (chat biasa)\n\n" +
-                "Responmu harus dalam format JSON seperti ini:\n" +
-                "{\n" +
-                "  \"suggested_action\": \"jenis_aksi\",\n" +
-                "  \"actionable\": true/false,\n" +
-                "  \"parameters\": {\n" +
-                "    \"id\": \"id_todo (jika ada)\",\n" +
-                "    \"title\": \"judul_todo\",\n" +
-                "    \"description\": \"deskripsi_todo\",\n" +
-                "    \"completed\": true/false,\n" +
-                "    \"search_term\": \"kata_kunci_pencarian\"\n" +
-                "  }\n" +
-                "}\n\n" +
-                "Contoh:\n" +
-                "- \"buat todo belajar\" → {\"suggested_action\": \"create_todo\", \"actionable\": true, \"parameters\": {\"title\": \"belajar\"}}\n" +
-                "- \"hapus todo nomor 1\" → {\"suggested_action\": \"delete_todo\", \"actionable\": true, \"parameters\": {\"id\": \"1\"}}\n" +
-                "- \"tandai selesai todo belajar\" → {\"suggested_action\": \"complete_todo\", \"actionable\": true, \"parameters\": {\"title\": \"belajar\"}}\n" +
-                "- \"ubah judul todo 2 jadi belajar java\" → {\"suggested_action\": \"update_todo\", \"actionable\": true, \"parameters\": {\"id\": \"2\", \"title\": \"belajar java\"}}\n" +
-                "- \"tampilkan semua todo\" → {\"suggested_action\": \"list_todos\", \"actionable\": true, \"parameters\": {}}\n" +
-                "- \"halo apa kabar\" → {\"suggested_action\": \"none\", \"actionable\": false, \"parameters\": {}}\n\n" +
-                "Hanya berikan JSON response, tanpa penjelasan tambahan.",
-                userMessage
+                    "Analisis pesan user berikut dan tentukan aksi yang diinginkan beserta parameternya:\n\n"
+                    + "Pesan: \"%s\"\n\n"
+                    + "Tugas:\n"
+                    + "1. Identifikasi jenis aksi yang diinginkan user\n"
+                    + "2. Ekstrak parameter yang diperlukan untuk aksi tersebut\n"
+                    + "3. Tentukan apakah ini actionable (dapat langsung dieksekusi)\n\n"
+                    + "Jenis aksi yang tersedia:\n"
+                    + "- create_todo: membuat todo baru (perlu: title, description opsional)\n"
+                    + "- list_todos: menampilkan semua todo\n"
+                    + "- update_todo: mengubah todo (perlu: id/title lama, title/description/completed baru)\n"
+                    + "- complete_todo: menandai todo selesai (perlu: id/title)\n"
+                    + "- delete_todo: menghapus todo (perlu: id/title)\n"
+                    + "- get_statistics: menampilkan statistik todo\n"
+                    + "- none: tidak ada aksi spesifik (chat biasa)\n\n"
+                    + "Responmu harus dalam format JSON seperti ini:\n"
+                    + "{\n"
+                    + "  \"suggested_action\": \"jenis_aksi\",\n"
+                    + "  \"actionable\": true/false,\n"
+                    + "  \"parameters\": {\n"
+                    + "    \"id\": \"id_todo (jika ada)\",\n"
+                    + "    \"title\": \"judul_todo\",\n"
+                    + "    \"description\": \"deskripsi_todo\",\n"
+                    + "    \"completed\": true/false,\n"
+                    + "    \"search_term\": \"kata_kunci_pencarian\"\n"
+                    + "  }\n"
+                    + "}\n\n"
+                    + "Contoh:\n"
+                    + "- \"buat todo belajar\" → {\"suggested_action\": \"create_todo\", \"actionable\": true, \"parameters\": {\"title\": \"belajar\"}}\n"
+                    + "- \"hapus todo nomor 1\" → {\"suggested_action\": \"delete_todo\", \"actionable\": true, \"parameters\": {\"id\": \"1\"}}\n"
+                    + "- \"tandai selesai todo belajar\" → {\"suggested_action\": \"complete_todo\", \"actionable\": true, \"parameters\": {\"title\": \"belajar\"}}\n"
+                    + "- \"ubah judul todo 2 jadi belajar java\" → {\"suggested_action\": \"update_todo\", \"actionable\": true, \"parameters\": {\"id\": \"2\", \"title\": \"belajar java\"}}\n"
+                    + "- \"tampilkan semua todo\" → {\"suggested_action\": \"list_todos\", \"actionable\": true, \"parameters\": {}}\n"
+                    + "- \"halo apa kabar\" → {\"suggested_action\": \"none\", \"actionable\": false, \"parameters\": {}}\n\n"
+                    + "Hanya berikan JSON response, tanpa penjelasan tambahan.",
+                    userMessage
             );
             // Get AI response
             String aiResponse = deepSeekService.generateResponse(analysisPrompt, "");
@@ -139,53 +139,53 @@ public class AIOrchestatorService {
             // Fallback to simple keyword detection
             return analyzeUserMessageFallback(userMessage, username);
         }
-        
+
         // Generate chat response in Indonesian
         List<TodoEntity> todos = todoService.getMyTodos(username);
         String context = buildContextForAI(todos, username);
         String chatResponse = deepSeekService.generateResponse(userMessage, context);
-        
+
         // Build complete response
         Map<String, Object> response = new HashMap<>();
         response.put("message", chatResponse);
         response.put("actions", actions);
-        
+
         // Determine auto_execute based on action type and parameters
         boolean shouldAutoExecute = shouldAutoExecuteAction(actions, autoExecute);
         response.put("auto_execute", shouldAutoExecute);
-        
+
         response.put("context", Map.of(
-            "totalTodos", todos.size(),
-            "completedTodos", todos.stream().mapToInt(t -> t.isCompleted() ? 1 : 0).sum(),
-            "pendingTodos", todos.stream().mapToInt(t -> !t.isCompleted() ? 1 : 0).sum()
+                "totalTodos", todos.size(),
+                "completedTodos", todos.stream().mapToInt(t -> t.isCompleted() ? 1 : 0).sum(),
+                "pendingTodos", todos.stream().mapToInt(t -> !t.isCompleted() ? 1 : 0).sum()
         ));
-        
+
         return response;
     }
 
     /**
-     * Determine if an action should be auto-executed based on the action type and parameters
+     * Determine if an action should be auto-executed based on the action type
+     * and parameters
      */
     private boolean shouldAutoExecuteAction(Map<String, Object> actions, Boolean userAutoExecute) {
         if (actions == null || !Boolean.TRUE.equals(actions.get("actionable"))) {
             System.out.println("DEBUG: Action not actionable");
             return false;
         }
-        
+
         String suggestedAction = (String) actions.get("suggested_action");
         if (suggestedAction == null) {
             System.out.println("DEBUG: No suggested action");
             return false;
         }
-        
+
         System.out.println("DEBUG: Checking auto-execute for action: " + suggestedAction);
-        
+
         // Auto-execute rules based on action type
         switch (suggestedAction.toLowerCase()) {
             case "create_todo":
                 // Auto-execute if title is provided
-                @SuppressWarnings("unchecked")
-                Map<String, Object> params = (Map<String, Object>) actions.get("parameters");
+                @SuppressWarnings("unchecked") Map<String, Object> params = (Map<String, Object>) actions.get("parameters");
                 if (params != null && params.get("title") != null) {
                     String title = (String) params.get("title");
                     boolean canExecute = title != null && !title.trim().isEmpty();
@@ -194,17 +194,16 @@ public class AIOrchestatorService {
                 }
                 System.out.println("DEBUG: create_todo no title provided");
                 return false;
-                
+
             case "list_todos":
             case "get_statistics":
                 // These are safe to auto-execute
                 return true;
-                
+
             case "delete_todo":
             case "complete_todo":
                 // Auto-execute if title is provided and specific
-                @SuppressWarnings("unchecked")
-                Map<String, Object> actionParams = (Map<String, Object>) actions.get("parameters");
+                @SuppressWarnings("unchecked") Map<String, Object> actionParams = (Map<String, Object>) actions.get("parameters");
                 if (actionParams != null) {
                     String actionTitle = (String) actionParams.get("title");
                     Long actionId = null;
@@ -216,7 +215,7 @@ public class AIOrchestatorService {
                     } catch (Exception e) {
                         // ID not provided
                     }
-                    
+
                     // Auto-execute if ID is provided or title is specific enough
                     if (actionId != null || (actionTitle != null && actionTitle.trim().length() > 2)) {
                         System.out.println("DEBUG: " + suggestedAction + " auto-execute: true (title: " + actionTitle + ", id: " + actionId + ")");
@@ -226,11 +225,10 @@ public class AIOrchestatorService {
                 // Otherwise require confirmation
                 System.out.println("DEBUG: " + suggestedAction + " requires confirmation");
                 return Boolean.TRUE.equals(userAutoExecute);
-                
+
             case "update_todo":
                 // Auto-execute if sufficient parameters are provided
-                @SuppressWarnings("unchecked")
-                Map<String, Object> updateParams = (Map<String, Object>) actions.get("parameters");
+                @SuppressWarnings("unchecked") Map<String, Object> updateParams = (Map<String, Object>) actions.get("parameters");
                 if (updateParams != null) {
                     String updateTitle = (String) updateParams.get("title");
                     String titleRef = (String) updateParams.get("title_reference");
@@ -243,7 +241,7 @@ public class AIOrchestatorService {
                     } catch (Exception e) {
                         // ID not provided
                     }
-                    
+
                     // Auto-execute if we have clear identification
                     if (updateId != null || titleRef != null || (updateTitle != null && updateTitle.trim().length() > 2)) {
                         System.out.println("DEBUG: update_todo auto-execute: true");
@@ -252,7 +250,7 @@ public class AIOrchestatorService {
                 }
                 System.out.println("DEBUG: update_todo requires confirmation");
                 return Boolean.TRUE.equals(userAutoExecute);
-                
+
             default:
                 return Boolean.TRUE.equals(userAutoExecute);
         }
@@ -266,25 +264,25 @@ public class AIOrchestatorService {
             switch (action.toLowerCase()) {
                 case "create_todo":
                     return createTodo(params, username);
-                    
+
                 case "list_todos":
                     return listTodos(params, username);
-                    
+
                 case "update_todo":
                     return updateTodo(params, username);
-                    
+
                 case "delete_todo":
                     return deleteTodo(params, username);
-                    
+
                 case "complete_todo":
                     return completeTodo(params, username);
-                    
+
                 case "search_todos":
                     return searchTodos(params, username);
-                    
+
                 case "get_statistics":
                     return getStatistics(username);
-                    
+
                 default:
                     throw new IllegalArgumentException("Unknown action: " + action);
             }
@@ -300,19 +298,19 @@ public class AIOrchestatorService {
         StringBuilder context = new StringBuilder();
         context.append("User: ").append(username).append("\n");
         context.append("Current Todos:\n");
-        
+
         if (todos.isEmpty()) {
             context.append("- No todos yet\n");
         } else {
             todos.forEach(todo -> {
                 context.append("- ID: ").append(todo.getId())
-                       .append(", Title: ").append(todo.getTitle())
-                       .append(", Status: ").append(todo.isCompleted() ? "Completed" : "Pending")
-                       .append(", Description: ").append(todo.getDescription() != null ? todo.getDescription() : "No description")
-                       .append("\n");
+                        .append(", Title: ").append(todo.getTitle())
+                        .append(", Status: ").append(todo.isCompleted() ? "Completed" : "Pending")
+                        .append(", Description: ").append(todo.getDescription() != null ? todo.getDescription() : "No description")
+                        .append("\n");
             });
         }
-        
+
         context.append("\nAnda dapat membantu user dengan:\n");
         context.append("- Membuat todo baru\n");
         context.append("- Menampilkan dan mencari todo\n");
@@ -320,10 +318,10 @@ public class AIOrchestatorService {
         context.append("- Menandai todo sebagai selesai atau pending\n");
         context.append("- Menghapus todo\n");
         context.append("- Mendapatkan statistik tentang todo\n");
-        
+
         return context.toString();
     }
-    
+
     /**
      * Extract JSON section (for nested objects)
      */
@@ -336,23 +334,23 @@ public class AIOrchestatorService {
         }
         return null;
     }
-    
+
     /**
      * Fallback analysis method using simple keyword detection
      */
     private Map<String, Object> analyzeUserMessageFallback(String userMessage, String username) {
         Map<String, Object> actions = new HashMap<>();
         String lowerMessage = userMessage.toLowerCase();
-        
+
         // Indonesian keywords for creating todos
         if (lowerMessage.contains("buat") || lowerMessage.contains("tambah") || lowerMessage.contains("create") || lowerMessage.contains("add")) {
             actions.put("suggested_action", "create_todo");
-            
+
             // Extract title and description from message
             Map<String, String> todoDetails = extractTodoDetailsFromMessage(userMessage);
             String title = todoDetails.get("title");
             String description = todoDetails.get("description");
-            
+
             if (title != null && !title.trim().isEmpty()) {
                 Map<String, Object> parameters = new HashMap<>();
                 parameters.put("title", title.trim());
@@ -382,24 +380,24 @@ public class AIOrchestatorService {
         } else {
             actions.put("actionable", false);
         }
-        
+
         // Generate chat response for fallback as well
         try {
             List<TodoEntity> todos = todoService.getMyTodos(username);
             String context = buildContextForAI(todos, username);
             String chatResponse = deepSeekService.generateResponse(userMessage, context);
-            
+
             // Build complete response for fallback
             Map<String, Object> response = new HashMap<>();
             response.put("message", chatResponse);
             response.put("actions", actions);
             response.put("auto_execute", true); // Default to auto-execute
             response.put("context", Map.of(
-                "totalTodos", todos.size(),
-                "completedTodos", todos.stream().mapToInt(t -> t.isCompleted() ? 1 : 0).sum(),
-                "pendingTodos", todos.stream().mapToInt(t -> !t.isCompleted() ? 1 : 0).sum()
+                    "totalTodos", todos.size(),
+                    "completedTodos", todos.stream().mapToInt(t -> t.isCompleted() ? 1 : 0).sum(),
+                    "pendingTodos", todos.stream().mapToInt(t -> !t.isCompleted() ? 1 : 0).sum()
             ));
-            
+
             return response;
         } catch (Exception e) {
             // If error generating chat response, still return actions
@@ -411,19 +409,19 @@ public class AIOrchestatorService {
     private TodoEntity createTodo(Map<String, Object> params, String username) {
         String title = (String) params.get("title");
         String description = (String) params.get("description");
-        
+
         if (title == null || title.trim().isEmpty()) {
             throw new IllegalArgumentException("Title is required for creating todo");
         }
-        
+
         CreateTodoRequest request = new CreateTodoRequest(title, description);
         return todoService.create(username, request);
     }
-    
+
     private List<TodoEntity> listTodos(Map<String, Object> params, String username) {
         return todoService.getMyTodos(username);
     }
-    
+
     private Optional<TodoEntity> updateTodo(Map<String, Object> params, String username) {
         // Try to get ID first
         Long id = null;
@@ -432,21 +430,21 @@ public class AIOrchestatorService {
         } catch (Exception e) {
             // ID not provided or invalid, try to find by title reference
         }
-        
+
         String title = (String) params.get("title");
         String description = (String) params.get("description");
         Boolean completed = (Boolean) params.get("completed");
         String titleReference = (String) params.get("title_reference");
-        
+
         // If no ID, try to find by title reference or existing title
         if (id == null) {
             String searchTitle = titleReference != null ? titleReference : title;
             if (searchTitle != null && !searchTitle.trim().isEmpty()) {
                 List<TodoEntity> todos = todoService.getMyTodos(username);
                 Optional<TodoEntity> todoToUpdate = todos.stream()
-                    .filter(todo -> todo.getTitle().equalsIgnoreCase(searchTitle.trim()))
-                    .findFirst();
-                
+                        .filter(todo -> todo.getTitle().equalsIgnoreCase(searchTitle.trim()))
+                        .findFirst();
+
                 if (todoToUpdate.isPresent()) {
                     id = todoToUpdate.get().getId();
                 } else {
@@ -456,11 +454,11 @@ public class AIOrchestatorService {
                 throw new IllegalArgumentException("Parameter id atau title reference diperlukan untuk mengupdate todo");
             }
         }
-        
+
         UpdateTodoRequest request = new UpdateTodoRequest(title, description, completed);
         return todoService.update(username, id, request);
     }
-    
+
     private boolean deleteTodo(Map<String, Object> params, String username) {
         // Try to get ID first
         Long id = null;
@@ -469,29 +467,29 @@ public class AIOrchestatorService {
         } catch (Exception e) {
             // ID not provided or invalid, try to find by title
         }
-        
+
         if (id != null) {
             return todoService.delete(username, id);
         }
-        
+
         // If no ID, search by title
         String title = (String) params.get("title");
         if (title != null && !title.trim().isEmpty()) {
             List<TodoEntity> todos = todoService.getMyTodos(username);
             Optional<TodoEntity> todoToDelete = todos.stream()
-                .filter(todo -> todo.getTitle().equalsIgnoreCase(title.trim()))
-                .findFirst();
-            
+                    .filter(todo -> todo.getTitle().equalsIgnoreCase(title.trim()))
+                    .findFirst();
+
             if (todoToDelete.isPresent()) {
                 return todoService.delete(username, todoToDelete.get().getId());
             } else {
                 throw new IllegalArgumentException("Todo dengan judul '" + title + "' tidak ditemukan");
             }
         }
-        
+
         throw new IllegalArgumentException("Parameter id atau title diperlukan untuk menghapus todo");
     }
-    
+
     private Optional<TodoEntity> completeTodo(Map<String, Object> params, String username) {
         // Try to get ID first
         Long id = null;
@@ -500,111 +498,112 @@ public class AIOrchestatorService {
         } catch (Exception e) {
             // ID not provided or invalid, try to find by title
         }
-        
+
         if (id != null) {
             return todoService.toggle(username, id);
         }
-        
+
         // If no ID, search by title
         String title = (String) params.get("title");
         if (title != null && !title.trim().isEmpty()) {
             List<TodoEntity> todos = todoService.getMyTodos(username);
             Optional<TodoEntity> todoToComplete = todos.stream()
-                .filter(todo -> todo.getTitle().equalsIgnoreCase(title.trim()))
-                .findFirst();
-            
+                    .filter(todo -> todo.getTitle().equalsIgnoreCase(title.trim()))
+                    .findFirst();
+
             if (todoToComplete.isPresent()) {
                 return todoService.toggle(username, todoToComplete.get().getId());
             } else {
                 throw new IllegalArgumentException("Todo dengan judul '" + title + "' tidak ditemukan");
             }
         }
-        
+
         throw new IllegalArgumentException("Parameter id atau title diperlukan untuk menandai todo selesai");
     }
-    
+
     private List<TodoEntity> searchTodos(Map<String, Object> params, String username) {
         String query = (String) params.get("query");
         List<TodoEntity> allTodos = todoService.getMyTodos(username);
-        
+
         if (query == null || query.trim().isEmpty()) {
             return allTodos;
         }
-        
+
         return allTodos.stream()
-                .filter(todo -> todo.getTitle().toLowerCase().contains(query.toLowerCase()) ||
-                              (todo.getDescription() != null && todo.getDescription().toLowerCase().contains(query.toLowerCase())))
+                .filter(todo -> todo.getTitle().toLowerCase().contains(query.toLowerCase())
+                || (todo.getDescription() != null && todo.getDescription().toLowerCase().contains(query.toLowerCase())))
                 .toList();
     }
-    
+
     private Map<String, Object> getStatistics(String username) {
         List<TodoEntity> todos = todoService.getMyTodos(username);
-        
+
         int total = todos.size();
         int completed = (int) todos.stream().filter(TodoEntity::isCompleted).count();
         int pending = total - completed;
         double completionRate = total > 0 ? (double) completed / total * 100 : 0;
-        
+
         Map<String, Object> stats = new HashMap<>();
         stats.put("total", total);
         stats.put("completed", completed);
         stats.put("pending", pending);
         stats.put("completionRate", Math.round(completionRate * 100.0) / 100.0);
-        
+
         return stats;
     }
-    
+
     /**
-     * Extract title and description from user message for creating todo using AI
+     * Extract title and description from user message for creating todo using
+     * AI
      */
     private Map<String, String> extractTodoDetailsFromMessage(String userMessage) {
         Map<String, String> details = new HashMap<>();
-        
+
         if (userMessage == null || userMessage.trim().isEmpty()) {
             return details;
         }
-        
+
         try {
             // Create prompt for AI to extract todo details
             String extractionPrompt = String.format(
-                "Analisis pesan berikut dan ekstrak informasi todo:\n\n" +
-                "Pesan: \"%s\"\n\n" +
-                "Tugas:\n" +
-                "1. Identifikasi apakah ini permintaan untuk membuat todo\n" +
-                "2. Ekstrak judul todo (wajib)\n" +
-                "3. Ekstrak deskripsi todo (opsional)\n\n" +
-                "Responmu harus dalam format JSON seperti ini:\n" +
-                "{\n" +
-                "  \"is_todo_request\": true/false,\n" +
-                "  \"title\": \"judul todo\",\n" +
-                "  \"description\": \"deskripsi todo atau null jika tidak ada\"\n" +
-                "}\n\n" +
-                "Contoh:\n" +
-                "- \"buat todo belajar\" → {\"is_todo_request\": true, \"title\": \"belajar\", \"description\": null}\n" +
-                "- \"tolong buatkan todo belajar renang dengan deskripsi belajar renang di surabaya\" → {\"is_todo_request\": true, \"title\": \"belajar renang\", \"description\": \"belajar renang di surabaya\"}\n\n" +
-                "Hanya berikan JSON response, tanpa penjelasan tambahan.",
-                userMessage
+                    "Analisis pesan berikut dan ekstrak informasi todo:\n\n"
+                    + "Pesan: \"%s\"\n\n"
+                    + "Tugas:\n"
+                    + "1. Identifikasi apakah ini permintaan untuk membuat todo\n"
+                    + "2. Ekstrak judul todo (wajib)\n"
+                    + "3. Ekstrak deskripsi todo (opsional)\n\n"
+                    + "Responmu harus dalam format JSON seperti ini:\n"
+                    + "{\n"
+                    + "  \"is_todo_request\": true/false,\n"
+                    + "  \"title\": \"judul todo\",\n"
+                    + "  \"description\": \"deskripsi todo atau null jika tidak ada\"\n"
+                    + "}\n\n"
+                    + "Contoh:\n"
+                    + "- \"buat todo belajar\" → {\"is_todo_request\": true, \"title\": \"belajar\", \"description\": null}\n"
+                    + "- \"tolong buatkan todo belajar renang dengan deskripsi belajar renang di surabaya\" → {\"is_todo_request\": true, \"title\": \"belajar renang\", \"description\": \"belajar renang di surabaya\"}\n\n"
+                    + "Hanya berikan JSON response, tanpa penjelasan tambahan.",
+                    userMessage
             );
-            
+
             // Get AI response
             String aiResponse = deepSeekService.generateResponse(extractionPrompt, "");
-            
+
             // Parse JSON response
             if (aiResponse != null && aiResponse.trim().startsWith("{")) {
                 try {
                     // Simple JSON parsing for the specific format we expect
                     String jsonContent = aiResponse.trim();
-                    
+
                     // Extract is_todo_request
                     boolean isTodoRequest = jsonContent.contains("\"is_todo_request\": true");
-                    
+
                     if (isTodoRequest) {
                         // Extract title
                         String title = extractJsonValue(jsonContent, "title");
                         if (title != null && !title.trim().isEmpty() && !title.equals("null")) {
                             details.put("title", title.trim());
                         }
-                        
+
                         // Extract description
                         String description = extractJsonValue(jsonContent, "description");
                         if (description != null && !description.trim().isEmpty() && !description.equals("null")) {
@@ -620,16 +619,16 @@ public class AIOrchestatorService {
                 // Fallback to simple extraction
                 return extractTodoDetailsFallback(userMessage);
             }
-            
+
         } catch (Exception e) {
             System.out.println("Error in AI todo extraction: " + e.getMessage());
             // Fallback to simple extraction
             return extractTodoDetailsFallback(userMessage);
         }
-        
+
         return details;
     }
-    
+
     /**
      * Simple helper to extract JSON values
      */
@@ -640,7 +639,7 @@ public class AIOrchestatorService {
         if (m.find()) {
             return m.group(1);
         }
-        
+
         // Try without quotes for null values
         pattern = "\"" + key + "\"\\s*:\\s*(null)";
         p = java.util.regex.Pattern.compile(pattern);
@@ -648,10 +647,10 @@ public class AIOrchestatorService {
         if (m.find()) {
             return null;
         }
-        
+
         return null;
     }
-    
+
     /**
      * Fallback extraction method using simple pattern matching
      */
@@ -659,17 +658,17 @@ public class AIOrchestatorService {
         String message = userMessage.trim();
         String lowerMessage = message.toLowerCase();
         Map<String, String> details = new HashMap<>();
-        
+
         String title = null;
         String description = null;
-        
+
         // Pattern: "buat todo [title] dengan deskripsi [description]"
         if (lowerMessage.contains("dengan deskripsi")) {
             String[] parts = message.split("(?i)dengan deskripsi");
             if (parts.length >= 2) {
                 String titlePart = parts[0].trim();
                 description = parts[1].trim();
-                
+
                 // Extract title from first part - handle "tolong" prefix
                 if (titlePart.toLowerCase().startsWith("tolong buat todo") || titlePart.toLowerCase().startsWith("tolong buatkan todo")) {
                     title = titlePart.replaceFirst("(?i)^tolong\\s+(buat(kan)?\\s+todo\\s*)", "").trim();
@@ -681,57 +680,49 @@ public class AIOrchestatorService {
                     title = titlePart.replaceFirst("(?i)(tambah\\s+todo\\s*)", "").trim();
                 }
             }
-        }
-        // Pattern: "tolong buat todo [title]" or "buat/buatkan todo [title]"
+        } // Pattern: "tolong buat todo [title]" or "buat/buatkan todo [title]"
         else if (lowerMessage.startsWith("tolong buat todo ") || lowerMessage.startsWith("tolong buatkan todo ")) {
             if (lowerMessage.startsWith("tolong buat todo ")) {
                 title = message.substring(17).trim(); // Remove "tolong buat todo "
             } else {
                 title = message.substring(20).trim(); // Remove "tolong buatkan todo "
             }
-        }
-        else if (lowerMessage.startsWith("buat todo ") || lowerMessage.startsWith("buatkan todo ")) {
+        } else if (lowerMessage.startsWith("buat todo ") || lowerMessage.startsWith("buatkan todo ")) {
             if (lowerMessage.startsWith("buat todo ")) {
                 title = message.substring(10).trim(); // Remove "buat todo "
             } else {
                 title = message.substring(13).trim(); // Remove "buatkan todo "
             }
-        }
-        // Pattern: "tolong tambah todo [title]" or "tambah todo [title]"
+        } // Pattern: "tolong tambah todo [title]" or "tambah todo [title]"
         else if (lowerMessage.startsWith("tolong tambah todo ")) {
             title = message.substring(19).trim(); // Remove "tolong tambah todo "
-        }
-        else if (lowerMessage.startsWith("tambah todo ")) {
+        } else if (lowerMessage.startsWith("tambah todo ")) {
             title = message.substring(12).trim(); // Remove "tambah todo "
-        }
-        // Pattern: "tolong buat [title]" or "buat [title]" (without "todo" keyword)
+        } // Pattern: "tolong buat [title]" or "buat [title]" (without "todo" keyword)
         else if (lowerMessage.startsWith("tolong buat ") || lowerMessage.startsWith("tolong buatkan ")) {
             if (lowerMessage.startsWith("tolong buat ")) {
                 title = message.substring(12).trim(); // Remove "tolong buat "
             } else {
                 title = message.substring(15).trim(); // Remove "tolong buatkan "
             }
-        }
-        else if (lowerMessage.startsWith("buat ") || lowerMessage.startsWith("buatkan ")) {
+        } else if (lowerMessage.startsWith("buat ") || lowerMessage.startsWith("buatkan ")) {
             if (lowerMessage.startsWith("buat ")) {
                 title = message.substring(5).trim(); // Remove "buat "
             } else {
                 title = message.substring(8).trim(); // Remove "buatkan "
             }
-        }
-        // Pattern: "tolong tambah [title]" or "tambah [title]"
+        } // Pattern: "tolong tambah [title]" or "tambah [title]"
         else if (lowerMessage.startsWith("tolong tambah ")) {
             title = message.substring(14).trim(); // Remove "tolong tambah "
-        }
-        else if (lowerMessage.startsWith("tambah ")) {
+        } else if (lowerMessage.startsWith("tambah ")) {
             title = message.substring(7).trim(); // Remove "tambah "
         }
-        
+
         // Clean up title if it contains "todo" at the beginning
         if (title != null && title.toLowerCase().startsWith("todo ")) {
             title = title.substring(5).trim();
         }
-        
+
         // Handle null values properly
         if (title != null && !title.trim().isEmpty()) {
             details.put("title", title.trim());
@@ -739,10 +730,10 @@ public class AIOrchestatorService {
         if (description != null && !description.trim().isEmpty()) {
             details.put("description", description.trim());
         }
-        
+
         return details;
     }
-    
+
     private Long getLongParam(Map<String, Object> params, String key) {
         Object value = params.get(key);
         if (value instanceof Number) {

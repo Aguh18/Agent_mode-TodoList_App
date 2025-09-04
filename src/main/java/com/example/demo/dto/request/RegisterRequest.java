@@ -1,4 +1,5 @@
-package com.example.dto.request;
+package com.example.demo.dto.request;
+
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -16,5 +17,6 @@ public class RegisterRequest {
     @NotBlank
     private String password;
 
-    private String role;
+ 
+   private String role;
 }

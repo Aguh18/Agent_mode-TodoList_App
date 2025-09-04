@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.request.LoginRequest;
+import com.example.demo.dto.request.RegisterRequest;
+import com.example.demo.dto.response.LoginResponse;
 import com.example.demo.model.UserEntity;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.utils.JwtUtils;
 import com.example.demo.utils.PasswordUtils;
 import com.example.demo.utils.ResponseUtils;
-import com.example.dto.request.LoginRequest;
-import com.example.dto.request.RegisterRequest;
-import com.example.dto.response.LoginResponse;
 
 @RestController
 @RequestMapping("/api/auth/")

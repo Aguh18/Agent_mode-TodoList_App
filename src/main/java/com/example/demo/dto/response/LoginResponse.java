@@ -1,4 +1,4 @@
-package com.example.dto.response;
+package com.example.demo.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginResponse {
+
     private String token;
 }

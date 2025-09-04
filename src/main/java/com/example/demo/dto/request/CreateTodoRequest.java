@@ -1,16 +1,18 @@
-package com.example.dto.request;
+package com.example.demo.dto.request;
 
-public class UpdateTodoRequest {
+
+
+    
+public class CreateTodoRequest {
     private String title;
     private String description;
-    private Boolean completed;
+    
 
-    public UpdateTodoRequest() {}
+    public CreateTodoRequest() {}
 
-    public UpdateTodoRequest(String title, String description, Boolean completed) {
+    public CreateTodoRequest(String title, String description) {
         this.title = title;
         this.description = description;
-        this.completed = completed;
     }
 
     public String getTitle() {
@@ -27,13 +29,5 @@ public class UpdateTodoRequest {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Boolean getCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(Boolean completed) {
-        this.completed = completed;
     }
 }

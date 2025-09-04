@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.request.CreateTodoRequest;
+import com.example.demo.dto.request.UpdateTodoRequest;
 import com.example.demo.model.TodoEntity;
 import com.example.demo.service.TodoService;
 import com.example.demo.utils.JwtUtils;
 import com.example.demo.utils.ResponseUtils;
-import com.example.dto.request.CreateTodoRequest;
-import com.example.dto.request.UpdateTodoRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -125,7 +125,7 @@ public class TodoController {
 
             UpdateTodoRequest request = new UpdateTodoRequest();
             request.setCompleted(true);
-            
+
             Optional<TodoEntity> completedTodo = todoService.update(username, id, request);
             if (completedTodo.isPresent()) {
                 return ResponseUtils.ok("Todo marked as completed successfully", completedTodo.get());
@@ -150,7 +150,7 @@ public class TodoController {
 
             UpdateTodoRequest request = new UpdateTodoRequest();
             request.setCompleted(false);
-            
+
             Optional<TodoEntity> uncompletedTodo = todoService.update(username, id, request);
             if (uncompletedTodo.isPresent()) {
                 return ResponseUtils.ok("Todo marked as not completed successfully", uncompletedTodo.get());
@@ -177,7 +177,7 @@ public class TodoController {
             List<TodoEntity> completedTodos = todos.stream()
                     .filter(TodoEntity::isCompleted)
                     .toList();
-            
+
             return ResponseUtils.ok("Completed todos retrieved successfully", completedTodos);
 
         } catch (Exception e) {
@@ -199,7 +199,7 @@ public class TodoController {
             List<TodoEntity> pendingTodos = todos.stream()
                     .filter(todo -> !todo.isCompleted())
                     .toList();
-            
+
             return ResponseUtils.ok("Pending todos retrieved successfully", pendingTodos);
 
         } catch (Exception e) {
